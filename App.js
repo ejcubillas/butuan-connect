@@ -6,11 +6,14 @@ import {
   StyleSheet,
   
 } from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 import { Button } from './src/components/ui'
 import { NavigationContainer } from '@react-navigation/native';
 // Routes
 import AuthStack from './src/navigation/auth';
-import IndividualTab from './src/navigation/individual';
+import IndividualStack from './src/navigation/individual';
+import EstablishmentTab from './src/navigation/establishment';
+
 // redux
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from './src/store/slices/user';
@@ -32,7 +35,12 @@ const App = () => {
   const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.user.loggedIn);
 
-  
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1500)
+  }, [])
+
   useEffect(() => {
     // login('ej', 'password')
     console.log(loggedIn)
@@ -47,7 +55,7 @@ const App = () => {
         // hidden={true}
       />
       <NavigationContainer>
-        {(loggedIn) ? <IndividualTab/> : <AuthStack />}
+        {(loggedIn) ? <IndividualStack/> : <AuthStack />}
       </NavigationContainer>
     </>
   )

@@ -1,10 +1,10 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 
 // pages
 import Login from '../screens/authentication';
-import { IndRegPersonalInfo, IndRegAccountInfo  } from '../screens/authentication/individual';
+import { IndRegPersonalInfo, IndRegAccountInfo, IndRegAddressInfo, IndRegJobStatusInfo, IndRegJobSelfie  } from '../screens/authentication/individual';
 
 function AuthStack() {
   return (
@@ -16,14 +16,18 @@ function AuthStack() {
         },
         headerTitleAlign: 'center',
         headerTitleStyle: {
-          fontWeight: 'bold'
-        }
+          fontFamily: 'OpenSans-Bold'
+        },
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 
       }}
     >
       <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
       <Stack.Screen name="RegisterIndividualPersonalInfo" component={IndRegPersonalInfo} options={{title: "Let's get started!"}}/>
       <Stack.Screen name="RegisterIndividualAccountInfo" component={IndRegAccountInfo} options={{title: "Create your account"}}/>
+      <Stack.Screen name="RegisterIndividualJobStatusInfo" component={IndRegJobStatusInfo} options={{title: "Job Status"}}/>
+      <Stack.Screen name="RegisterIndividualAddressInfo" component={IndRegAddressInfo} options={{title: "Address"}}/>
+      <Stack.Screen name="RegisterIndividualSelfie" component={IndRegJobSelfie} options={{title: "Upload Photo"}}/>
     </Stack.Navigator>
   );
 }

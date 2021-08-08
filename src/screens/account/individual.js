@@ -43,7 +43,7 @@ const IndividualAccount = (props) => {
       <ScrollView>
       {
           list.map((item, i) => (
-            <ListContainer style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <ListContainer style={{ flexDirection: 'row', alignItems: 'center' }} key={i}>
               <View style={{paddingRight: 15}}>
                 <Icon name={item.icon} size={25}/>
               </View>

@@ -9,7 +9,7 @@ const Link = (props) => {
     <TouchableOpacity
       {...props}
     >
-      <Text style={{color: colors.primary}}>{props.title}</Text>
+      <Text style={{color: colors.primary, ...props.titleStyle, fontFamily: 'OpenSans-SemiBold'}}>{props.title}</Text>
     </TouchableOpacity>
   )
   

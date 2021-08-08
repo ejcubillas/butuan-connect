@@ -6,7 +6,6 @@ import { Input, Button, Link } from '../../../../components/ui';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { setName, login } from '../../store/slices/user';
 
 // components
 // import AccountTypeSelection from './AccountTypeSelection';

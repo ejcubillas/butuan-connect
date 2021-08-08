@@ -11,13 +11,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import colors from '../../styles/colors';
 
 // components
-const QRWidth = Dimensions.get('window').width * .6;
+import QRScanner from '../../components/qrscanner';
+import ScanResultIndividual from '../../components/scan-result/individual';
 
+const QRWidth = Dimensions.get('window').width * .6;
 
 const TraceEstablishment = (props) => {
   const dispatch = useDispatch();
-  
-  
+  const [showScanner, setShowScanner] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   useEffect(() => {
     // dispatch(login('ej', 'password')())
   }, [dispatch])
@@ -37,14 +39,14 @@ const TraceEstablishment = (props) => {
             alignItems: 'center'
           }}>
           
-          <Text style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 15, color: colors.secondary}}>Show your QR to the establishment</Text>  
+          <Text style={{ textAlign: 'center', fontWeight: 'bold', marginBottom: 15, color: colors.secondary}}>Show your QR</Text>  
           <QRCode
-            value="{name: Ernest Jay Cubillas, barangay: 'Libertad'}"
+            value="60d6bf9872571ae8024ab0eb"
             size={QRWidth}
           />
           <View style={{ marginTop: 15, paddingHorizontal: 40}}>
-            <Text style={{ fontSize: 22, textAlign: 'center', fontWeight: 'bold', color: colors.secondary}}>Ernest Jay Cubillas</Text>
-            <Text style={{ textAlign: 'center', color: colors.secondary}}>Block 123 Lot 23 Northtown, Libertad</Text>  
+            <Text style={{ fontSize: 22, textAlign: 'center', fontWeight: 'bold', color: colors.secondary}}>SM City Butuan</Text>
+            <Text style={{ textAlign: 'center', color: colors.secondary}}>J C Aquino Ave, Butuan City</Text>  
           </View>
           
         </View>
@@ -66,12 +68,53 @@ const TraceEstablishment = (props) => {
       </ListContainer>
 
       <ListContainer style={{}}>
-        <Button
-          title="SCAN QR"
-          type="primary"
-        />
-        <Text style={{ textAlign: 'center', color: colors.secondary, marginTop: 15}}>Scan the QR Code of the establishment.</Text> 
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{flex: 1, paddingRight: 7}}>
+            <Button
+              title="SCAN ENTRANCE"
+              type="primary"
+              onPress={() => {
+                setShowScanner(true);
+              }}
+            />
+          </View>
+          <View style={{flex: 1, paddingLeft: 7}}>
+            <Button
+              title="SCAN EXIT"
+              type="primary"
+              onPress={() => {
+                setShowScanner(true);
+              }}
+            />
+          </View>
+          
+          
+        </View>
+        
+        <Text style={{ textAlign: 'center', color: colors.secondary, marginTop: 15}}>Scan the QR Code of the individual.</Text> 
       </ListContainer>
+
+      <QRScanner
+        isVisible={showScanner}
+        close={() => {
+          setShowScanner(false);
+          // setShowResult(true);
+        }}
+        success={(data) => {
+          setShowScanner(false);
+          setShowResult(true);
+        }}
+
+      />
+
+      <ScanResultIndividual
+        isVisible={showResult}
+        close={() => {
+          setShowResult(false)
+        }}
+
+
+      />
     </ScrollView>
   )
   

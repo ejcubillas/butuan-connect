@@ -1,9 +1,11 @@
 import React, { useState, useEffect} from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { BottomSheet, ListItem, Icon } from 'react-native-elements'; 
-import { Link } from '../../components/ui';
+import Modal from 'react-native-modal';
+import { Link, TextRegular, TextSubHeading } from '../../components/ui';
 import { stylesMain } from '../../styles/main';
 import * as Animatable from 'react-native-animatable';
+import colors from '../../styles/colors';
 
 const AccountTypeSelection = (props) => {
 
@@ -19,35 +21,31 @@ const AccountTypeSelection = (props) => {
   ]
   
   return (
-    <BottomSheet
-      modalProps={{
-        // transparent: false,
-        animationType: 'fade',
-        onRequestClose: () => {
-          props.toggle();
-        }
-      }}
+    <Modal
+      animationIn="slideInUp"
       isVisible={props.isVisible}
-      containerStyle={{backgroundColor: 'rgba(0.5, 0.25, 0, 0.2)'}}
+      style={{margin: 0}}
+      onBackButtonPress={props.toggle}
+      onBackdropPress={props.toggle}
     >
-      <Animatable.View animation='fadeInUp' duration={300}>
+      <Animatable.View animationIn='fadeInUp' animationOut='fadeOutDown' duration={300} style={{paddingBottom: 15, backgroundColor: '#fff', position: 'absolute', bottom: 0, width:'100%'}}>
         <View style={[stylesMain.titleContainer, styles.headerContainer]}>
-          <Text style={stylesMain.modalHeader}>Register as</Text>
+          <TextSubHeading>Register as</TextSubHeading>
           
-          <Link title={<Icon name="close"/>} onPress={() => {props.toggle()}}/>
+          <Link title={<Icon name="close" color={colors.primary}/>} onPress={props.toggle}/>
           
         </View>
         
         {options.map((val, i) => (
           <ListItem key={i} containerStyle={{}} onPress={() => {props.onPress(val.type)}}>
             <ListItem.Content>
-              <ListItem.Title>{val.title}</ListItem.Title>
+              <TextRegular style={{fontSize: 16}}>{val.title}</TextRegular>
             </ListItem.Content>
           </ListItem>
         ))}
       </Animatable.View>
       
-    </BottomSheet>
+    </Modal>
   )
 }
 
@@ -55,7 +53,8 @@ const AccountTypeSelection = (props) => {
 const styles = StyleSheet.create({
   headerContainer: {
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingBottom: 20
   }
 })
 

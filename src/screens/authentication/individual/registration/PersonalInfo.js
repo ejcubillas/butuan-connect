@@ -1,100 +1,273 @@
 import React, { useState, useEffect} from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import moment from 'moment-timezone';
+import {Picker} from '@react-native-picker/picker';
 import { View, StyleSheet, Text} from 'react-native';
+import { Icon } from 'react-native-elements'; 
 import { stylesMain } from '../../../../styles/main';
-import { Input, Button, Link } from '../../../../components/ui';
+import {  Button, Link, Input, TextLabel, TextRegular } from '../../../../components/ui';
+import DatePicker from '../../../../components/date-picker';
+// import { Input } from 'react-native-elements';
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux';
-import { setName, login } from '../../store/slices/user';
+import { ScrollView } from 'react-native';
+import colors from '../../../../styles/colors';
 
 // components
 // import AccountTypeSelection from './AccountTypeSelection';
 
 const PersonalInfo = (props) => {
   const dispatch = useDispatch();
-  const [username, setUsername] = useState('');
+  const [personalInfo, setPersonalInfo] = useState({
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    suffix: '',
+    birthDate: '',
+    sex: '',
+    contact: '',
+    email: ''
+  })
 
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    middleName: '',
+    suffix: '',
+    birthDate: '',
+    sex: '',
+    contact: '',
+    email: ''
+  });
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   useEffect(() => {
     // dispatch(login('ej', 'password')())
   }, [dispatch])
 
-  return (
-    <View style={[stylesMain.container]}>
-      
-      <View style={[styles.form]}>
-        <Input
-          // label="Username"
-          placeholder="First Name"
-          value={username}
-          onChangeText={(val) => {
-          
-          }}
-        />
+  const toggleDatePickerVisibility  = () => {
+    setDatePickerVisibility(!isDatePickerVisible);
+  }
 
+  const setFields = (fieldName, value, required = true) => {
+    if (!fieldName || !value == undefined) return; 
+
+    setPersonalInfo({
+      ...personalInfo,
+      [fieldName]: value
+    })
+
+    if (required) {
+      if (value !== '') {
+        if (fieldName == 'email') {
+          let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+          if (reg.test(value) === false) {
+            setErrors({
+              ...errors,
+              [fieldName]: 'Invalid email format.'
+            })
+          }else {
+            setErrors({
+              ...errors,
+              [fieldName]: ''
+            })
+          }
+        }else {
+          setErrors({
+            ...errors,
+            [fieldName]: ''
+          })
+        }
+      }else {
+        setErrors({
+          ...errors,
+          [fieldName]: 'This field is required.'
+        })
+      }
+      
+      
+    }
+  }
+
+  const checkErrors = () => {
+    /// for the required fields
+
+    let onError = false;
+    const errorMsg = 'This field is required.'
+    if (personalInfo.firstName == '' || 
+        personalInfo.lastName == '' || 
+        personalInfo.middleName == '' || 
+        personalInfo.sex == '' || 
+        personalInfo.birthDate== '' || 
+        personalInfo.contact == ''
+      ) {
+      onError = true; 
+
+      setErrors({
+        ...errors,
+        firstName: (personalInfo.firstName == '') ? errorMsg : '',
+        lastName: (personalInfo.lastName == '') ? errorMsg : '',
+        middleName: (personalInfo.middleName == '') ? errorMsg : '',
+        sex: (personalInfo.sex == '') ? errorMsg : '',
+        birthDate: (personalInfo.birthDate == '') ? errorMsg : '',
+        contact: (personalInfo.contact == '') ? errorMsg : '',
+      })
+    }
+
+
+    if (errors.email != '') {
+      onError = true; 
+    }
+
+    return onError;
+  }
+
+  const nextScreen = async () => {
+
+    const onError = checkErrors();
+    console.log(errors);
+    if (!onError) {
+      props.navigation.navigate('RegisterIndividualAddressInfo', {
+        personalInfo
+      });
+    }    
+
+    // temp
+    props.navigation.navigate('RegisterIndividualAddressInfo', {
+      personalInfo
+    });
+  }
+
+  return (
+    <ScrollView style={[stylesMain.container]}>
+      <View style={{paddingHorizontal: 10, marginBottom: 15}}>
+        <TextRegular>For new resisdent on brgy please fill up the following for contract tracing.</TextRegular>
+      </View>
+      <View style={[styles.form]}>
+        
+        
         <Input
-          // label="Username"
-          placeholder="Middle Name (Optional)"
-          value={username}
-          onChangeText={(val) => {
-          
-          }}
+          value={personalInfo.firstName}
+          placeholder="Juan"
+          errorMessage={errors.firstName}
+          onChangeText={(val) => setFields('firstName', val)}
+          label="First Name"
         />
         
         <Input
-          // label="Username"
-          placeholder="Last Name"
-          value={username}
-          onChangeText={(val) => {
+          label="Middle Name"
           
-          }}
+          value={personalInfo.middleName}
+          onChangeText={(val) => setFields('middleName', val)}
+          errorMessage={errors.middleName}
+        />
+        
+        <Input
+          value={personalInfo.lastName}
+          label='Last Name'
+          placeholder="Dela Cruz"
+          errorMessage={errors.lastName}
+          onChangeText={(val) => setFields('lastName', val)}
         />
 
         <Input
-          // label="Username"
-          placeholder="Gender"
-          value={username}
-          onChangeText={(val) => {
-          
-          }}
+          label="Name Suffix (Optional)"
+          placeholder="Jr/Sr/etc"
+          value={personalInfo.suffix}
+          onChangeText={(val) => setFields('suffix', val, false)}
+          errorMessage={errors.suffix}
+        />
+
+        <TextLabel>Sex</TextLabel>
+        <View style={stylesMain.pickerContainer}>
+          <Picker
+            mode="dropdown"
+            style={{ marginHorizontal: -12, backgroundColor: '#fff', padding: 0}}
+            selectedValue={personalInfo.sex}
+            onValueChange={(val, index) => setFields('sex', val)}>
+            <Picker.Item label="Select Sex" value=""  style={stylesMain.pickerItemPlaceholderStyle}/>
+            <Picker.Item label="Male" value="m"  style={stylesMain.pickerItemStyle}/>
+            <Picker.Item label="Female" value="f"  style={stylesMain.pickerItemStyle}/>
+          </Picker>
+        </View>
+        <Text style={stylesMain.customInputError}>{errors.sex}</Text>
+        <TextLabel>Birth Date</TextLabel>
+        <View style={{
+          borderBottomColor: '#999',
+          borderBottomWidth: 1,
+          marginHorizontal: 10,
+          marginBottom: 25,
+          padding: 12,
+          paddingHorizontal: 5,
+          flexDirection: 'row',
+          // justifyContent: 'space-between',
+          // alignItems: 'center'
+          // paddingHorizontal: 0
+        }}>
+          {/* <Text
+            style={{
+              fontSize: 18,
+              color: (personalInfo.birthDate == '') ? '#999': '#000'
+            }}
+            >Birth Date</Text> */}
+          {
+            (personalInfo.birthDate == '') ? 
+              <Link
+                title="Select Date"
+                titleStyle={{fontSize: 16}}
+                onPress={toggleDatePickerVisibility}
+              />
+              :
+              <View style={{flexDirection: 'row', flex: 1,justifyContent: 'space-between', alignItems: 'center'}}>
+                <Text style={{fontSize: 16}}>{moment(personalInfo.birthDate).format('MMM DD, YYYY')}</Text>
+                <Link
+                  title={<Icon name="close"/>}
+                  titleStyle={{color: colors.primary}}
+                  style={{fontSize: 18, marginLeft: 15}}
+                  onPress={() => setFields('birthDate', '')}
+                />
+              </View>
+          }
+         
+        </View>
+        <Text style={stylesMain.customInputError}>{errors.birthDate}</Text>
+
+        <Input
+          label="Contact Number"
+          value={personalInfo.contact}
+          onChangeText={(val) => setFields('contact', val)}
+          placeholder="0912345678"
+          errorMessage={errors.contact}
+          keyboardType = 'numeric'
         />
 
         <Input
-          // label="Username"
-          placeholder="Birth Date"
-          value={username}
-          onChangeText={(val) => {
-          
-          }}
+          label="Email Address (Optional)"
+          placeholder="email@address.com"
+          value={personalInfo.email}
+          onChangeText={(val) => setFields('email', val)}
+          errorMessage={errors.email}
         />
 
-        <Input
-          // label="Username"
-          placeholder="Barangay"
-          value={username}
-          onChangeText={(val) => {
-          
-          }}
-        />
-
-        <View style={{marginTop: 20}}>
+        <View style={{marginTop: 40}}>
           <Button
             title="NEXT"
             type="primary"
-            onPress={() => {
-              props.navigation.navigate('RegisterIndividualAccountInfo')
-            }}
+            onPress={nextScreen}
           />
         </View>
         
       </View>
+         
+      <DatePicker
+        isVisible={isDatePickerVisible}
+        toggle={toggleDatePickerVisibility}
+        title="Select Birth Date"
+        onSubmit={(date) => setFields('birthDate', date)}
+      />
       
-      
-      
-
-      
-    </View>
+    </ScrollView>
   )
 }
 
@@ -104,12 +277,9 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     justifyContent: 'flex-end',
-    // paddingBottom: 40
   },
+
   form: {
-    // paddingVertical: 15,
-    // flex: 3,
-    // marginTop: 40
-    // justifyContent: 'center'
+    marginBottom: 40
   }
 })

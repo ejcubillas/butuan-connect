@@ -1,21 +1,23 @@
 import * as React from 'react';
-// import { Input } from 'react-native-elements';
-import { TextInput } from 'react-native';
+import { Input } from 'react-native-elements';
+import { TextLabel } from '../text';
+// import { TextInput } from 'react-native';
 
-const Input = (props) => {
+const TextInput = (props) => {
   return (
-    <TextInput
+    <Input
       {...props}
-      style={{
-        backgroundColor: '#f2f2f2',
-        paddingHorizontal: 15,
-        paddingVertical: 15,
-        marginVertical: 5,
-        fontSize: 16
+      
+      style={{marginTop: 0}}
+      placeholderTextColor="#999"
+      label={(props.label) ? <TextLabel style={{marginLeft: 0}}>{props.label}</TextLabel> : null}
+      inputStyle={{
+        fontFamily: 'OpenSans-Regular'
       }}
-      placeholderTextColor='#999'
+      // labelStyle={{marginLeft: -15}}
+      // containerStyle={{marginBottom: 10}}
     />
   );
 };
 
-export default Input;
+export default TextInput;
