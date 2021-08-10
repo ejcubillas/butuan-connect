@@ -6,6 +6,7 @@ import {
   StyleSheet,
   
 } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from 'react-native-splash-screen';
 import { Button } from './src/components/ui'
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,38 +14,47 @@ import { NavigationContainer } from '@react-navigation/native';
 import AuthStack from './src/navigation/auth';
 import IndividualStack from './src/navigation/individual';
 import EstablishmentTab from './src/navigation/establishment';
-
+import Splash from './src/screens/Splash';
 // redux
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from './src/store/slices/user';
-
-const Main = () => {
-  return (
-    
-    <Button
-      title={`asd ${useSelector((state) => state.user.firstName)}`}
-      onPress={() => {
-        dispatch(login('ej', 'password'))
-      }}
-    />
-  
-)
-}
+import { useDispatch, useSelector } from './src/store/store';
 
 const App = () => {
   const dispatch = useDispatch();
-  const loggedIn = useSelector((state) => state.user.loggedIn);
+  const user = useSelector((state) => state.user);
+  const [screen, setScreen] = useState(<Splash />)
 
   useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 1500)
+    SplashScreen.hide();
+
+    NetInfo.fetch().then(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+      console.log("Is Reachable?", state.isInternetReachable); // if maka connect sa internet
+    });
   }, [])
 
   useEffect(() => {
     // login('ej', 'password')
-    console.log(loggedIn)
-  }, [loggedIn])
+    if (user.loggedIn) {
+      if (user.userType == 'individual') {
+        setScreen(<IndividualStack/>);
+      }else if (user.userType == 'establishment') {
+        setScreen(<EstablishmentTab/>);
+      }else {
+        setScreen(<AuthStack/>);
+      }
+    }else {
+      setScreen(<Splash />);
+      setTimeout(() => {
+        setScreen(<AuthStack/>);
+      }, 500)
+      
+    }
+
+  }, [user.loggedIn])
+
+
+  // return screen;
 
   return (
     <>
@@ -55,7 +65,7 @@ const App = () => {
         // hidden={true}
       />
       <NavigationContainer>
-        {(loggedIn) ? <IndividualStack/> : <AuthStack />}
+        {screen}
       </NavigationContainer>
     </>
   )

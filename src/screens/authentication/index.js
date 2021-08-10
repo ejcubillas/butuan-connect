@@ -2,17 +2,19 @@ import React, { useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, StyleSheet, Text, StatusBar, Dimensions, ScrollView } from 'react-native';
 import { stylesMain } from '../../styles/main';
-import { Input, Button, Link } from '../../components/ui';
+import { Input, Button, Link, TextRegular } from '../../components/ui';
 import { Icon } from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';
 import AutoHeightImage from 'react-native-auto-height-image';
 // Redux
-import { useDispatch, useSelector } from 'react-redux';
-import { setName, login } from '../../store/slices/user';
+import { useDispatch, useSelector } from '../../store/store';
+import { setName, loginIndividual, setFullName} from '../../store/slices/user';
+
 
 // components
 import AccountTypeSelection from './AccountTypeSelection';
 import ProgressOverlay from '../../components/progress-overlay';
+import AlertModal from '../../components/ui/modal/Alert';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -20,12 +22,62 @@ const Auth = (props) => {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [showAccountSelection, setShowAccountSelection] = useState(false);
-  const [showProgress, setShowProgress] = useState(false)
+  const [errors, setErrors] = useState({
+    username: '',
+    password: ''
+  })
 
-  useEffect(() => {
-    // dispatch(login('ej', 'password')())
-  }, [dispatch])
+  const [showAccountSelection, setShowAccountSelection] = useState(false);
+  const [showProgress, setShowProgress] = useState(false);
+  const [alertModal, setAlertModal] = useState({
+    show: false,
+    content: '',
+    type: 'error' // or success
+  });
+
+
+  const user = useSelector((state) => state.user);
+  
+  const checkError = () => {
+    let onError = false;
+    if (username === '' || password === '') {
+      setErrors({
+        ...errors,
+        username: (username == '') ? 'This field is required.' : '',
+        password: (password == '') ? 'This field is required.' : '',
+      })
+      onError = true;
+    }
+    return onError;
+  }
+
+  const userLogin = async () => {
+
+    const error = await checkError();
+    
+    if (error) {
+      return;
+    }
+
+    setShowProgress(true)
+    dispatch(loginIndividual(username, password))
+      .then(loginRes => {
+        setShowProgress(false)
+      })
+      .catch(errorMsg => {
+        console.log(errorMsg);
+        setTimeout(() => {
+          setShowProgress(false)
+          setAlertModal({
+            show: true,
+            type: 'error',
+            content: errorMsg
+          })
+        }, 1500)
+      })
+
+   
+  }
 
   return (
     <ScrollView style={[stylesMain.container, {padding: 0, marginTop: -30}]}>
@@ -47,9 +99,16 @@ const Auth = (props) => {
           placeholder="Username"
           value={username}
           onChangeText={(val) => {
-            setUsername(val)
+            if (val != '') {
+              setErrors({
+                ...errors,
+                username: ''
+              });
+            }
+            setUsername(val);
           }}
           leftIcon={<Icon name="person"/>}
+          errorMessage={errors.username}
         />
         <Input
           // label="Password"
@@ -57,38 +116,29 @@ const Auth = (props) => {
           placeholder="Password"
           value={password}
           onChangeText={(val) => {
+            if (val != '') {
+              setErrors({
+                ...errors,
+                password: ''
+              });
+            }
             setPassword(val);
           }}
           leftIcon={<Icon name="lock"/>}
+          errorMessage={errors.password}
         />
         
         <View style={{marginTop: 20, marginBottom: 20}}>
           <Button
             title="LOGIN"
             type="primary"
-            onPress={() => {
-              setShowProgress(true);
-              setTimeout(() => {
-                // setShowProgress(false);
-                dispatch(login('ej', 'password'))
-              }, 2000)
-              
-            }}
+            onPress={userLogin}
           />
         </View>
-        {/* <View style={{alignItems: 'center', marginTop: 15}}>
-        <Link
-          title="Forgot Password?"
-          onPress={() => {
-            setShowAccountSelection(!showAccountSelection);
-          }}
-        />
-          
-        </View> */}
         
       </View>
       <View style={{alignItems: 'center', marginTop: 5}}>
-      <Link
+        <Link
             title="Login as Establishment"
             onPress={() => {
               setShowAccountSelection(!showAccountSelection);
@@ -127,6 +177,12 @@ const Auth = (props) => {
 
       <ProgressOverlay
         isVisible={showProgress}
+      />
+      <AlertModal
+        isVisible={alertModal.show}
+        type={alertModal.type}
+        content={alertModal.content}
+        handleClose={() => setAlertModal({...alertModal, show: false})}
       />
     </ScrollView>
   )

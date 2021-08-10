@@ -9,8 +9,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Animatable from 'react-native-animatable';
 import PhotoRequirement from '../../../../components/photo-requirement';
-// components
-// import AccountTypeSelection from './AccountTypeSelection';
+import SelfieIcon from '../../../../icons/selfie.svg';
 
 const Selfie = (props) => {
   const camera = useRef(null);
@@ -44,7 +43,8 @@ const Selfie = (props) => {
           <TouchableOpacity style={{alignItems: 'center'}}
             onPress={openCamera}
           >
-            <Animatable.Image
+            <SelfieIcon height={250} width={250}/>
+            {/* <Animatable.Image
               animation='rubberBand'
               source={require('../../../../img/camera.png')}
               style={{
@@ -53,7 +53,7 @@ const Selfie = (props) => {
                 opacity: 0.5
                 // borderRadius: 100
               }}
-            />
+            /> */}
 
             <TextSubHeading style={{marginTop: 20}}>Tap to take a shot</TextSubHeading>
           </TouchableOpacity>

@@ -9,7 +9,7 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // pages
-import TraceIndividual from '../screens/trace/individual';
+import TraceIndividual from '../screens/home/individual';
 
 function IndividualStack() {
   return (

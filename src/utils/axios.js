@@ -3,7 +3,7 @@ import axios from 'axios';
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000'
+  baseURL: 'https://trace.novusoftit.com/api/'
 });
 
 axiosInstance.interceptors.response.use(

@@ -5,17 +5,22 @@ import axios from '../../utils/axios';
 export const tracingSlice = createSlice({
   name: 'tracing',
   initialState: {
-    history: []
+    history: [],
+    offlineScan: [
+      {
+        date: '',
+        id: '',
+        qr:'',
+        synced: false
+      }
+    ]
   },
   reducers: {
     setHistory: (state, { payload }) => {
       state.history = payload.history;
     },
 
-    setLogin: (state, {payload}) => {
-      console.log('YAYA');
-      state.loggedIn = true;
-    }
+    
   },
 })
 

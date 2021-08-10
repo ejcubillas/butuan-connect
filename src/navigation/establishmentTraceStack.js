@@ -4,7 +4,7 @@ const Stack = createStackNavigator();
 
 // pages
 import Login from '../screens/authentication';
-import TraceEstablishment from '../screens/trace/establishment';
+import TraceEstablishment from '../screens/home/establishment';
 import colors from '../styles/colors';
 
 function EstablishmentTraceStack() {

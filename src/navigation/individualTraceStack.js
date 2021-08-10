@@ -4,7 +4,7 @@ const Stack = createStackNavigator();
 
 // pages
 import Login from '../screens/authentication';
-import TraceIndividual from '../screens/trace/individual';
+import TraceIndividual from '../screens/home/individual';
 import colors from '../styles/colors';
 
 function IndividualTraceStack() {

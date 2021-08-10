@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
-import {Button, View} from 'react-native';
+import {Button, View, Text} from 'react-native';
 import { Icon } from 'react-native-elements';
 import Link from '../link';
-import TextSubHeading from '../text';
+import { TextSubHeading } from '../text';
 import Modal from 'react-native-modal';
 import colors from '../../../styles/colors';
 
 function InfoModal(props) {
-
   return (
       <Modal
         isVisible={props.isVisible}
