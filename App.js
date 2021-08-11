@@ -17,20 +17,19 @@ import EstablishmentTab from './src/navigation/establishment';
 import Splash from './src/screens/Splash';
 // redux
 import { useDispatch, useSelector } from './src/store/store';
+import { setNetworkInfo } from './src/store/slices/network';
 
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const [screen, setScreen] = useState(<Splash />)
+  const tracing = useSelector((state) => state.tracing);
 
   useEffect(() => {
     SplashScreen.hide();
-
-    NetInfo.fetch().then(state => {
-      console.log("Connection type", state.type);
-      console.log("Is connected?", state.isConnected);
-      console.log("Is Reachable?", state.isInternetReachable); // if maka connect sa internet
-    });
+    NetInfo.addEventListener(state => dispatch(setNetworkInfo(state)));
+    console.log('SCANNED OFFLINE');
+    console.log(tracing.offlineScan);
   }, [])
 
   useEffect(() => {
@@ -44,6 +43,7 @@ const App = () => {
         setScreen(<AuthStack/>);
       }
     }else {
+      // just for loading for 500ms
       setScreen(<Splash />);
       setTimeout(() => {
         setScreen(<AuthStack/>);
@@ -52,9 +52,6 @@ const App = () => {
     }
 
   }, [user.loggedIn])
-
-
-  // return screen;
 
   return (
     <>

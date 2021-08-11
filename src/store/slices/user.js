@@ -14,7 +14,8 @@ export const userSlice = createSlice({
     userType: 'individual', // could be individual or establishment
 
     /// FOR ESTABLISHMENT
-    scanType: 'entrance' // or exit // for establishment only
+    scanType: 1, // or 0 (1 = Entrance, 0 = Exit) // for establishment only
+    camera: 'back'
   },
   reducers: {
     setName: (state, { payload }) => {
@@ -79,7 +80,7 @@ export const loginIndividual = (username, password) => (dispatch, getState) => n
     
 })
 
-export const loginEstablishment = (username, password, loginType) => (dispatch, getState) => new Promise(async (resolve, reject) => {
+export const loginEstablishment = (username, password, loginType, camera) => (dispatch, getState) => new Promise(async (resolve, reject) => {
   const response = await axios.post('/profile-log-in', {
     username,
     password

@@ -13,7 +13,7 @@ const AlertModal = (props) => {
   let title = null;
   let icon = <Warning height={70} width={70}/>
   if (props.type === 'success') {
-    title = 'Success!'
+    title = 'Yay!'
     icon = <Checked height={70} width={70}/>
   }else if (props.type === 'error') {
     title = 'Oops!'

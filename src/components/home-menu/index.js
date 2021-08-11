@@ -6,11 +6,13 @@ import colors from '../../styles/colors';
 // Redux
 import { useDispatch, useSelector } from '../../store/store';
 import { logout } from '../../store/slices/user';
+import { scanEstablishment } from '../../store/slices/tracing';
 // components
 import { TextRegular } from '../ui';
 import { AlertModal } from '../ui/modal';
 import ProgressOverlay from '../progress-overlay';
 import QRScanner from '../../components/qrscanner';
+import ScanResult from '../scan-result';
 // icons
 import Bell from '../../icons/bell.svg';
 import Messages from '../../icons/comments.svg';
@@ -18,8 +20,6 @@ import Man from '../../icons/man.svg';
 import QRCode from '../../icons/qr-code.svg';
 import Question from '../../icons/question.svg';
 import SmartPhone from '../../icons/smartphone.svg';
-
-
 
 const HomeMenu = (props) => {
   const dispatch = useDispatch();
@@ -31,9 +31,30 @@ const HomeMenu = (props) => {
   });
   const [showProgress, setShowProgress] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
-
+  const [showScanSuccess, setShowScanSuccess] = useState(false)
   const processScan = (data) => {
-    console.log(data);
+    setShowScanner(false);
+    setShowProgress(true);
+    setTimeout(() => {
+      dispatch(scanEstablishment(data))
+        .then(scanRes => {
+          // console.log
+          console.log(scanRes);
+          setShowProgress(false);
+          setShowScanSuccess(true);
+        })
+        .catch(error => {
+          console.log('failed');
+          setShowProgress(false);
+          setAlertModal({
+            show: true,
+            type: 'error',
+            content: error
+          })
+        })
+      
+    }, 1500)
+    
   }
 
   const userLogout = () => {
@@ -67,7 +88,7 @@ const HomeMenu = (props) => {
           <QRCode height={iconSize} width={iconSize}/>
           <TextRegular>Scan QR Code</TextRegular>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem}>
+        <TouchableOpacity style={styles.menuItem} onPress={processScan}>
           <Man height={iconSize} width={iconSize}/>
           <TextRegular>Update Profile</TextRegular>
         </TouchableOpacity>
@@ -105,6 +126,10 @@ const HomeMenu = (props) => {
         isVisible={showScanner}
         close={() => setShowScanner(false)}
         success={processScan}
+      />
+      <ScanResult
+        isVisible={showScanSuccess}
+        handleClose={() => setShowScanSuccess(false)}
       />
     </View>
       

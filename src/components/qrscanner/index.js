@@ -30,6 +30,7 @@ const QRScanner = (props) => {
       <QRCodeScanner
         fadeIn={false}
         onRead={(e) => {
+          // alert('AYAY');
           props.success(e.data);
         }}
         cameraStyle={{

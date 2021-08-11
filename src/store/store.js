@@ -4,12 +4,14 @@ import { configureStore, getDefaultMiddleware, applyMiddleware } from '@reduxjs/
 import { combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import userReducer from './slices/user'
-import tracingReducer from './slices/tracing'
+import userReducer from './slices/user';
+import tracingReducer from './slices/tracing';
+import networkReducer from './slices/network'
 
 const rootReducer = combineReducers({
     user: userReducer,
-    tracing: tracingReducer
+    tracing: tracingReducer,
+    network: networkReducer
 })
 
 const persistConfig = {

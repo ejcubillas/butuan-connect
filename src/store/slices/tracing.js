@@ -6,11 +6,15 @@ export const tracingSlice = createSlice({
   name: 'tracing',
   initialState: {
     history: [],
-    offlineScan: [
+    offlineScan: [],
+
+    /// ESTABLISHMENT
+    estabOfflineScan: [
       {
         date: '',
         id: '',
         qr:'',
+        logType: 0, // or 1
         synced: false
       }
     ]
@@ -19,6 +23,15 @@ export const tracingSlice = createSlice({
     setHistory: (state, { payload }) => {
       state.history = payload.history;
     },
+
+    setOfflineScan: (state, { payload }) => {
+      state.offlineScan.push(payload);
+      // state.te
+    },
+
+    setEstOfflineScan: () => {
+
+    }
 
     
   },
@@ -128,3 +141,47 @@ export function getHistory (username, password) {
 
   }
 } 
+
+///// INDIVIDUAL
+export const scanEstablishment = (qrcode) => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  //tracing
+  const state = getState();
+  // resolve();
+  
+  if (!state.network.isInternetReachable) {
+    // if offline (network.isInternetReachable == false), save it to offlineScan
+    // save it to offline scan
+    dispatch(tracingSlice.actions.setOfflineScan({
+      qrcode,
+      id: state.user.id,
+      synced: false,
+      date: Date.now()
+    }))
+
+    resolve('Offline Scan - success');
+
+  }else {
+    // if online, send to server
+    try {
+      const response = await axios.post('/profile-establishment-scan', {
+        id: state.user.id,
+        code: qrcode
+      })
+
+      if (response.data.success) {
+        resolve('Online Scan - success');
+      }else {
+        reject(response.data.msg);
+      }
+    } catch (error) {
+      reject('Something went wrong. Please try again.')
+    }
+  }
+
+
+  
+  
+})
+
+
+///// Establishment

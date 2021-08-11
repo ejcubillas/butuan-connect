@@ -13,6 +13,7 @@ import colors from '../../styles/colors';
 import QRScanner from '../../components/qrscanner';
 import ScanResultEstablishment from '../../components/scan-result/establishment';
 import HomeMenu from '../../components/home-menu';
+import NetworkIndicator from '../../components/network-indicator';
 
 const QRWidth = Dimensions.get('window').width * .6;
 const windowWidth = Dimensions.get('window').width;
@@ -24,6 +25,7 @@ const TraceIndividual = (props) => {
   const [showResult, setShowResult] = useState(false);
   const [qrSize, setQRSize] = useState(0);
   const user = useSelector((state) => state.user);
+  const network = useSelector((state) => state.network);
 
   return (
     <View style={styles.container}>
@@ -37,46 +39,60 @@ const TraceIndividual = (props) => {
       <View style={{flex: 1}}>
         <View style={{alignItems: 'center', marginTop: (windowWidth/2.3)*-1}}>
           <View style={{ position: 'relative' }}>
-            <Image
-              source={{
-                uri: user.profileImage
-              }}
-              style={{
-                width: windowHeight/4.5,
-                height: windowHeight/4.5,
-                borderRadius: windowHeight/4.5,
-                borderWidth: 5,
-                borderColor: '#fff'
-              }}
-            />
-            <View style={styles.accountVerifiedIcon}>
-              <Icon
-                name="check-circle"
-                color={colors.primary}
-                size={35}
-              />
-            </View>
+            {
+              (user.profileImage) ? 
+                <>
+                  <Image
+                    source={{
+                      uri: user.profileImage
+                    }}
+                    style={{
+                      width: windowHeight/4.5,
+                      height: windowHeight/4.5,
+                      borderRadius: windowHeight/4.5,
+                      borderWidth: 5,
+                      borderColor: '#fff'
+                    }}
+                  />
+                  <View style={styles.accountVerifiedIcon}>
+                    <Icon
+                      name="check-circle"
+                      color={colors.primary}
+                      size={35}
+                    />
+                  </View>
+                </> : null
+            }
+            
           </View>
           <TextRegular style={styles.name}>{user.fullName}</TextRegular>
         </View>
         <View 
           onLayout={(event) => setQRSize(event.nativeEvent.layout.height-10)}
           style={styles.qrContainer}>
-            <Image
-              source={{
-                uri: user.qrcode
-              }}
-              style={{
-                width: qrSize,
-                height: qrSize,
-                borderColor: colors.primary,
-                borderWidth: 5
-              }}
-            />
+            {
+              (user.qrcode) ?
+                <Image
+                  source={{
+                    uri: user.qrcode
+                  }}
+                  style={{
+                    width: qrSize,
+                    height: qrSize,
+                    borderColor: colors.primary,
+                    borderWidth: 5
+                  }}
+                />
+                : null
+            }
+            
         </View>
         <View style={{ flex: 1 }}>
             <HomeMenu/>
         </View>
+        {
+          (!network.isInternetReachable) ? <NetworkIndicator/> : null
+        }
       </View>
 
       <QRScanner
