@@ -145,7 +145,7 @@ const TraceEstablishment = (props) => {
       </View>
       <View style={styles.footerContainer}>
         <View style={styles.footerContent}>
-          <TouchableOpacity style={styles.iconContainer} onPress={switchCamera} >
+          <TouchableOpacity style={styles.iconContainer}>
             <Icon size={30} type="material-community" name="format-list-bulleted" />
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconContainer} onPress={toggleCamera} >
