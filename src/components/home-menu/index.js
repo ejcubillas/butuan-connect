@@ -12,7 +12,7 @@ import { TextRegular } from '../ui';
 import { AlertModal } from '../ui/modal';
 import ProgressOverlay from '../progress-overlay';
 import QRScanner from '../../components/qrscanner';
-import ScanResult from '../scan-result';
+import ScanResult from '../scan-result/offlineResult';
 // icons
 import Bell from '../../icons/bell.svg';
 import Messages from '../../icons/comments.svg';

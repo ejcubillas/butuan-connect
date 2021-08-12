@@ -9,15 +9,7 @@ export const tracingSlice = createSlice({
     offlineScan: [],
 
     /// ESTABLISHMENT
-    estabOfflineScan: [
-      {
-        date: '',
-        id: '',
-        qr:'',
-        logType: 0, // or 1
-        synced: false
-      }
-    ]
+    estabOfflineScan: []
   },
   reducers: {
     setHistory: (state, { payload }) => {
@@ -29,8 +21,9 @@ export const tracingSlice = createSlice({
       // state.te
     },
 
-    setEstOfflineScan: () => {
-
+    setEstOfflineScan: (state, { payload }) => {
+      console.log(state.estabOfflineScan);
+      state.estabOfflineScan.push(payload);
     }
 
     
@@ -41,106 +34,6 @@ export const tracingSlice = createSlice({
 export const { setHistory } = tracingSlice.actions;
 
 export default tracingSlice.reducer;
-
-export function getHistory (username, password) {
-  
-  const tempHistory = [
-    {
-      date: Date.now(),
-      location: 'Gaisano Butuan',
-      type: 'Business Establishment',
-      traceType: 'Exit'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Entrance'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Exit'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Entrance'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Exit'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Entrance'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Exit'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Entrance'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Exit'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Entrance'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Exit'
-    },
-
-    {
-      date: Date.now(),
-      location: 'SM City Butuan',
-      type: 'Business Establishment',
-      traceType: 'Entrance'
-    },
-  ]
-
-  return async (dispatch) => {
-    try {
-      console.log('HAHA')
-      dispatch(tracingSlice.actions.setHistory({history: tempHistory}));
-    }catch (error) {
-      console.log(error);
-      console.log("Error Error");
-    }
-
-  }
-} 
 
 ///// INDIVIDUAL
 export const scanEstablishment = (qrcode) => (dispatch, getState) => new Promise(async (resolve, reject) => {
@@ -185,3 +78,52 @@ export const scanEstablishment = (qrcode) => (dispatch, getState) => new Promise
 
 
 ///// Establishment
+export const scanIndividual = (qrcode) => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  const state = getState();
+  console.log(qrcode);
+
+  if (!state.network.isInternetReachable) {
+    // if offline (network.isInternetReachable == false), save it to offlineScan
+    // save it to offline scan
+    dispatch(tracingSlice.actions.setEstOfflineScan({
+      qrcode,
+      id: state.user.id,
+      synced: false,
+      date: Date.now()
+    }))
+
+    resolve({
+      status: 'COMPLETED-OFFLINE'
+    })
+
+  }else {
+    try {
+      const response = await axios.post('/scan-individual', {
+        code: qrcode,
+        id: state.user.id,
+        log_type: state.user.logType
+      })
+  
+      console.log(response.data);
+  
+      if (response.data.success) {
+        if (response.data.status == 'INVALID') {
+          resolve({
+            status: 'INVALID',
+            data: response.data
+          });
+        }else if (response.data.status == 'COMPLETED') {
+          resolve({
+            status: 'COMPLETED',
+            data: response.data
+          })
+        }
+      }else {
+        reject(response.data.msg || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      reject('Something went wrong. Please try again.');
+    }
+
+  }
+})

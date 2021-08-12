@@ -14,15 +14,13 @@ import { TouchableOpacity } from 'react-native';
 const NetworkIndicator = (props) => {
   const network = useSelector((state) => state.network);
   const [showLearnMore, setShowLearnMore] = useState(false);
+
+  if (network.isInternetReachable) return null; 
   return (
     <View style={{backgroundColor: colors.error, padding: 15, width: '100%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <Icon name="wifi-off" color="#fff" size={20}/>
-        <TextSubHeading style={{color: '#fff', fontSize: 14, marginLeft: 5}}>
-          {
-            (!network.isInternetReachable) ? "YOU'RE OFFLINE" : ''
-          }
-        </TextSubHeading>
+        <TextSubHeading style={{color: '#fff', fontSize: 14, marginLeft: 5}}>YOU'RE OFFLINE</TextSubHeading>
       </View>
       
       <TouchableOpacity>

@@ -1,30 +1,40 @@
 import React, { useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, StyleSheet, Text, StatusBar, Dimensions, ScrollView } from 'react-native';
-import { stylesMain } from '../../styles/main';
-import { Input, Button, Link, TextRegular } from '../../components/ui';
+import { stylesMain } from '../../../styles/main';
+import { Input, Button, Link, TextRegular, TextLabel } from '../../../components/ui';
 import { Icon } from 'react-native-elements';
 import * as Animatable from 'react-native-animatable';
 import AutoHeightImage from 'react-native-auto-height-image';
+import { Picker } from '@react-native-picker/picker';
 // Redux
-import { useDispatch, useSelector } from '../../store/store';
-import { setName, loginIndividual, setFullName} from '../../store/slices/user';
-
+import { useDispatch, useSelector } from '../../../store/store';
 
 // components
-import AccountTypeSelection from './AccountTypeSelection';
-import ProgressOverlay from '../../components/progress-overlay';
-import AlertModal from '../../components/ui/modal/Alert';
+import ProgressOverlay from '../../../components/progress-overlay';
+import AlertModal from '../../../components/ui/modal/Alert';
+import { loginEstablishment } from '../../../store/slices/user';
 
 const windowWidth = Dimensions.get('window').width;
 
-const Auth = (props) => {
+const LoginEstablishment = (props) => {
+
+  // props.navigation.setOptions({
+  //  headerStyle: {
+  //   //  backgroundColor: 'transparent'
+  //  },
+  //  title: ''
+  // })
+
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [logType, setLogType] = useState(1); // 0 for exit
   const [errors, setErrors] = useState({
     username: '',
-    password: ''
+    password: '',
+    logType: '',
+    
   })
 
   const [showAccountSelection, setShowAccountSelection] = useState(false);
@@ -60,12 +70,11 @@ const Auth = (props) => {
     }
 
     setShowProgress(true)
-    dispatch(loginIndividual(username, password))
+    dispatch(loginEstablishment(username, password, logType))
       .then(loginRes => {
         setShowProgress(false)
       })
       .catch(errorMsg => {
-        console.log(errorMsg);
         setShowProgress(false)
         setAlertModal({
           show: true,
@@ -78,19 +87,8 @@ const Auth = (props) => {
   }
 
   return (
-    <ScrollView style={[{padding: 0, marginTop: -30, paddingBottom: 40}]}>
+    <ScrollView style={[stylesMain.container, {padding: 0}]}>
       <StatusBar backgroundColor="transparent"/>
-      <View style={[styles.header]}>
-        <AutoHeightImage
-          source={require('../../img/header-2.png')}
-          width={windowWidth}
-        />
-        {/* <Text style={[stylesMain.textHeader]}>Welcome!</Text> */}
-        {/* <Text style={[stylesMain.textSubHeader]}>Login to your account</Text> */}
-      </View>
-      
-      
-
       <View style={[styles.form]}>
         <Input
           label="Your Username"
@@ -125,6 +123,24 @@ const Auth = (props) => {
           leftIcon={<Icon name="lock"/>}
           errorMessage={errors.password}
         />
+
+        <TextLabel>Log Type</TextLabel>
+        <View style={{
+          borderBottomColor: '#999',
+          borderBottomWidth: 1,
+          marginHorizontal: 10,
+          marginBottom: 25,
+          // marginTop: -5,
+        }}>
+          <Picker
+            mode="dropdown"
+            style={{ marginHorizontal: -12, backgroundColor: '#fff', padding: 0}}
+            selectedValue={logType}
+            onValueChange={(val, index) => setLogType(val)}>
+              <Picker.Item label="Entrance" value={1} style={stylesMain.pickerItemStyle}/>
+              <Picker.Item label="Exit" value={0} style={stylesMain.pickerItemStyle}/>
+          </Picker>
+        </View>
         
         <View style={{marginTop: 20, marginBottom: 20}}>
           <Button
@@ -135,48 +151,6 @@ const Auth = (props) => {
         </View>
         
       </View>
-      <View style={{alignItems: 'center', marginTop: 5}}>
-        <Link
-            title="Login as Establishment"
-            onPress={() => {
-              // setShowAccountSelection(!showAccountSelection);
-              props.navigation.navigate('LoginEstablishment', {})
-            }}
-          />
-      </View>
-      <View style={{alignItems: 'center', marginTop: 5, marginBottom: 20}}>
-        <Link
-          title="No account yet? Register here!"
-          onPress={() => {
-            // setShowAccountSelection(!showAccountSelection);
-            props.navigation.navigate('RegisterIndividualPersonalInfo', {})
-          }}
-        />
-      </View>
-      
-        
-      {/* 
-        // SELECT - REGISTER AS INDIVIDUAL or ESTABLISHMENT
-        //
-        <AccountTypeSelection
-        isVisible={showAccountSelection}
-        onPress={(type) => {
-          console.log('go to');
-          if (type == 'individual') {
-            setShowAccountSelection(!showAccountSelection)
-            props.navigation.navigate('RegisterIndividualPersonalInfo', {})
-            
-          }else if (type == 'individual') {
-            setShowAccountSelection(!showAccountSelection)
-            props.navigation.navigate('RegisterEstablishmentPersonalInfo', {})
-          }else {
-            setShowAccountSelection(!showAccountSelection)
-          }
-        }}
-        toggle={() => {
-          setShowAccountSelection(!showAccountSelection)
-        }}
-      /> */}
 
       <ProgressOverlay
         isVisible={showProgress}
@@ -191,7 +165,7 @@ const Auth = (props) => {
   )
 }
 
-export default Auth;
+export default LoginEstablishment;
 
 const styles = StyleSheet.create({
   header: {
@@ -199,7 +173,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   form: {
-    paddingTop: 0,
+    paddingTop: 15,
     paddingHorizontal: 20
   }
 })

@@ -11,7 +11,7 @@ import { ShadowPropTypesIOS } from 'react-native';
 // icons
 import Checked from '../../icons/checked.svg';
 
-
+// OFFLINE RESULT
 const ScanResult = (props) => {
 
   return (

@@ -24,7 +24,7 @@ function EstablishmentTraceStack() {
 
       }}
     >
-      <Stack.Screen name="EstablishmentTrace" component={TraceEstablishment} options={{title: "Butuan Contact Tracing"}}/>
+      <Stack.Screen name="TraceEstablishment" component={TraceEstablishment} options={{ headerShown: false}}/>
       {/* <Stack.Screen name="HistoryInfo" component={HistoryList} options={{title: " "}}/> */}
     </Stack.Navigator>
   );

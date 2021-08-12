@@ -15,9 +15,11 @@ import moment from 'moment-timezone';
 import * as Animatable from 'react-native-animatable';
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modal';
-import { ListContainer } from '../../components/ui'
+import { ListContainer, TextHeading, TextRegular } from '../ui'
+import colors from '../../styles/colors';
 
 const ScanResultIndividual = (props) => {
+  if (!props.data) return null;
   
   return (
     <Modal isVisible={props.isVisible}
@@ -38,7 +40,7 @@ const ScanResultIndividual = (props) => {
             <Icon
               name="close"
               size={30}
-              color="#222"
+              color={colors.primary}
             />
           </TouchableOpacity>
         </View>
@@ -46,7 +48,9 @@ const ScanResultIndividual = (props) => {
       <View style={{ alignItems: 'center', marginTop: 20}}>
         <Animatable.Image
           // animation='swing'
-          source={require('../../img/individual.jpg')}
+          source={{
+            uri: props.data.profile.picture
+          }}
           style={{
             width: 200,
             height: 200,
@@ -54,24 +58,25 @@ const ScanResultIndividual = (props) => {
           }}
         />
       </View>
-      <View style={{flex: 1, marginTop: 20}}>
-         
+      <View style={{padding: 20, paddingHorizontal: 70}}>
+        <TextHeading style={{textAlign: 'center'}}>{props.data.msg}!</TextHeading>
+        <TextRegular style={{textAlign: 'center', marginTop: 20}}>Thank you for using Butuan Connect. Stay safe!</TextRegular>
+      </View>
+      
+
+      <View style={{flex: 1, marginTop: 10, padding: 10}}>
         <ListContainer style={styles.listContainer}>
           <Text>Date/Time</Text>
-          <Text>{moment().tz('Asia/Manila').format('DD MMM YYYY - h:m A')}</Text>
+          <Text>{props.data.log.date} {props.data.log.time}</Text>
         </ListContainer>
         <ListContainer style={styles.listContainer}>
           <Text>Name</Text>
-          <Text>Ernest Jay Cubillas</Text>
+          <Text>{props.data.profile.fullname}</Text>
         </ListContainer>
         <ListContainer style={styles.listContainer}>
-          <Text>Barangay</Text>
-          <Text>Libertad</Text>
+          <Text>Address</Text>
+          <Text>{props.data.profile.place}</Text>
         </ListContainer>
-        <ListContainer style={styles.listContainer}>
-          <Text>Enter</Text>
-          <Text>Block 123 Lot 23 Northtown, Libertad</Text>
-        </ListContainer> 
       </View>  
     </Modal>
     

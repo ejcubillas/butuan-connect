@@ -13,7 +13,7 @@ import { NavigationContainer } from '@react-navigation/native';
 // Routes
 import AuthStack from './src/navigation/auth';
 import IndividualStack from './src/navigation/individual';
-import EstablishmentTab from './src/navigation/establishment';
+import EstablishmentStack from './src/navigation/establishmentTraceStack';
 import Splash from './src/screens/Splash';
 // redux
 import { useDispatch, useSelector } from './src/store/store';
@@ -38,7 +38,7 @@ const App = () => {
       if (user.userType == 'individual') {
         setScreen(<IndividualStack/>);
       }else if (user.userType == 'establishment') {
-        setScreen(<EstablishmentTab/>);
+        setScreen(<EstablishmentStack/>);
       }else {
         setScreen(<AuthStack/>);
       }

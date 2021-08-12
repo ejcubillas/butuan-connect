@@ -14,8 +14,9 @@ export const userSlice = createSlice({
     userType: 'individual', // could be individual or establishment
 
     /// FOR ESTABLISHMENT
-    scanType: 1, // or 0 (1 = Entrance, 0 = Exit) // for establishment only
-    camera: 'back'
+    logType: 1, // or 0 (1 = Entrance, 0 = Exit) // for establishment only
+    camera: 'back',
+
   },
   reducers: {
     setName: (state, { payload }) => {
@@ -33,10 +34,7 @@ export const userSlice = createSlice({
     setLoginEstablishment: (state, { payload }) => {
       state.loggedIn = true;
       state.id = payload.id;
-      state.fullName = payload.fullname;
-      state.qrcode = payload.qr_image_url;
-      state.profileImage = payload.picture_url;
-      state.brgy = payload.brgy;
+      state.logType = payload.log_type;
       state.userType = 'establishment';
     },
     setLogout: (state, { payload }) => {
@@ -47,15 +45,27 @@ export const userSlice = createSlice({
       state.brgy = '';
       state.loggedIn = false;
       state.userType = 'individual';
+      state.camera = 'back';
     },
     setUserProfile: (state, { payload }) => {
       console.log(payload);
+    },
+    setEstablishmentCamera: (state, { payload }) => {
+      console.log(payload);
+      state.camera = payload;
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { setName, setUserName, setUserPassword } = userSlice.actions;
+export const {
+  setName,
+  setLogin,
+  setLoginEstablishment,
+  setLogout,
+  setUserProfile,
+  setEstablishmentCamera
+} = userSlice.actions;
 
 export default userSlice.reducer;
 
@@ -80,23 +90,39 @@ export const loginIndividual = (username, password) => (dispatch, getState) => n
     
 })
 
-export const loginEstablishment = (username, password, loginType, camera) => (dispatch, getState) => new Promise(async (resolve, reject) => {
-  const response = await axios.post('/profile-log-in', {
-    username,
-    password
-  });
+export const loginEstablishment = (username, password, logType, camera = 'back') => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  console.log(username, password, logType);
+  try {
+    const response = await axios.post('/scan-login', {
+      username,
+      password,
+      log_type: logType,
+      camera
+    });
+    // console.log(response.data);
+    if (response.data.success) {
+      dispatch(userSlice.actions.setLoginEstablishment(response.data))
+      resolve('success')
 
-  console.log(response.data);
-
-  if (response.data.id) {
-    dispatch(userSlice.actions.setUserProfile('MAO NI FULL'))
-    resolve()
-    
-    
-  }else {
-    reject(response.data.msg || 'Something went wrong.')
+    }else {
+      reject(response.data.msg || 'Something went wrong. Please try again.')
+    }
+  } catch (error) {
+    reject('Something went wrong. Please try again.');
   }
+  
 })
+
+export const establishmentCamera = () => (dispatch, getState) => {
+  const state = getState();
+  console.log(state.user);
+  if (state.user.camera == 'back') {
+    dispatch(userSlice.actions.setEstablishmentCamera('front'))
+  }else {
+    dispatch(userSlice.actions.setEstablishmentCamera('back'))
+  }
+  return;
+}
 
 export const logout = () => (dispatch, getState) => new Promise(async (resolve, reject) => {
   try {

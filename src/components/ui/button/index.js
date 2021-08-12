@@ -9,8 +9,8 @@ const BtnPrimary = (props) => {
   return (
     <TouchableOpacity onPress={props.onPress}>
 
-      <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={['#90C857', '#52B246']} style={styles.primaryContainer}>
-        <Text style={styles.primaryText}>
+      <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={[(props.gradient1) ? props.gradient1 : '#90C857', (props.gradient2) ? props.gradient2 : '#52B246']} style={[styles.primaryContainer, {...props.style}]}>
+        <Text style={[styles.primaryText, props.textStyle]}>
           {props.title}
         </Text>
       </LinearGradient>
