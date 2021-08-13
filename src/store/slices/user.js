@@ -53,6 +53,10 @@ export const userSlice = createSlice({
     setEstablishmentCamera: (state, { payload }) => {
       console.log(payload);
       state.camera = payload;
+    },
+    updateContact: (state, { payload }) => {
+      state.email = payload.email,
+      state.contact
     }
   },
 })
@@ -131,5 +135,67 @@ export const logout = () => (dispatch, getState) => new Promise(async (resolve, 
   } catch (error) {
     reject('Something went wrong.');
   }
-  
+})
+
+export const register = (data) => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  console.log(data.selfie);
+  const fields = {
+    last_name: data.personalInfo.lastName,
+    first_name: data.personalInfo.firstName,
+    middle_name: data.personalInfo.middleName,
+    suffix: data.personalInfo.suffix,
+    birth_date: data.personalInfo.birthDate,
+    sex: data.personalInfo.sex,
+    contact_number: data.personalInfo.contact,
+    email_address: data.personalInfo.email,
+    philhealth_no: data.personalInfo.philhealth,
+    butuan_resident: data.address.isButuanResident,
+    province: data.address.province,
+    city_municipality: data.address.municipality,
+    barangay: data.address.barangay,
+    street_house: data.address.streetHouseNumber,
+    job_status: data.jobStatus.isEmployed,
+    occupation: data.jobStatus.occupation,
+    company_name: data.jobStatus.company,
+    company_address: data.jobStatus.companyAddress,
+    username: data.accountInfo.username,
+    password: data.accountInfo.password,
+    person_image: data.selfie
+  }
+
+  try {
+    const response = await axios.post('/registration', fields);
+    if (response.data.success) {
+      console.log(response.data);
+      resolve('Success');
+    }else {
+      reject((response.data.error) ? response.data.error[0].error : 'Something went wrong. Please try again.')
+    }
+  } catch (error) {
+    reject('Something went wrong. Please try again.')
+  }
+
+  // console.log(fields);
+  // resolve('NICE');
+})
+
+
+export const updateContact = (contact, email) => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  const state = getState();
+  try {
+    const response = await axios.post('/profile-update-contact-details', {
+      id: state.user.id,
+      contact_number: contact,
+      email_address: email
+    })
+
+    if (response.data.success) {
+      dispatch()
+    }else {
+
+    }
+
+  } catch (error) {
+    reject('Something went wrong');
+  }
 })

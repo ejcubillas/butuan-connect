@@ -89,16 +89,22 @@ const Address = (props) => {
       props.navigation.navigate('RegisterIndividualSelfie', {
         personalInfo: props.route.params.personalInfo,
         address: props.route.params.address,
-        jobStatus: jobStatus
+        jobStatus: {
+          ...jobStatus,
+          isEmployed: (isEmployed) ? 'EMPLOYED' : 'UNEMPLOYED'
+        }
       })
     }   
 
     // temp
-    props.navigation.navigate('RegisterIndividualSelfie', {
-      personalInfo: props.route.params.personalInfo,
-      address: props.route.params.address,
-      jobStatus: jobStatus
-    })
+    // props.navigation.navigate('RegisterIndividualSelfie', {
+    //   personalInfo: props.route.params.personalInfo,
+    //   address: props.route.params.address,
+    //   jobStatus: {
+    //     ...jobStatus,
+    //     isEmployed: (isEmployed) ? 'EMPLOYED' : 'UNEMPLOYED'
+    //   }
+    // })
   }
 
 
@@ -134,7 +140,7 @@ const Address = (props) => {
                 placeholder=""
                 value={jobStatus.company}
                 onChangeText={(val) => setFields('company', val)}
-                errorMessage={errors.occupation}
+                errorMessage={errors.company}
               />
 
               <Input

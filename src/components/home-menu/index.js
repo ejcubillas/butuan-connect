@@ -88,7 +88,7 @@ const HomeMenu = (props) => {
           <QRCode height={iconSize} width={iconSize}/>
           <TextRegular>Scan QR Code</TextRegular>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem} onPress={processScan}>
+        <TouchableOpacity style={styles.menuItem}>
           <Man height={iconSize} width={iconSize}/>
           <TextRegular>Update Profile</TextRegular>
         </TouchableOpacity>

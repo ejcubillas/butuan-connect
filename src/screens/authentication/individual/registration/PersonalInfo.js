@@ -26,7 +26,8 @@ const PersonalInfo = (props) => {
     birthDate: '',
     sex: '',
     contact: '',
-    email: ''
+    email: '',
+    philhealth: ''
   })
 
   const [errors, setErrors] = useState({
@@ -37,7 +38,8 @@ const PersonalInfo = (props) => {
     birthDate: '',
     sex: '',
     contact: '',
-    email: ''
+    email: '',
+    philhealth: ''
   });
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -62,7 +64,7 @@ const PersonalInfo = (props) => {
       if (value !== '') {
         if (fieldName == 'email') {
           let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
-          if (reg.test(value) === false) {
+          if (reg.test(value) === false || value == '') {
             setErrors({
               ...errors,
               [fieldName]: 'Invalid email format.'
@@ -100,7 +102,8 @@ const PersonalInfo = (props) => {
         personalInfo.middleName == '' || 
         personalInfo.sex == '' || 
         personalInfo.birthDate== '' || 
-        personalInfo.contact == ''
+        personalInfo.contact == '' ||
+        personalInfo.email == ''
       ) {
       onError = true; 
 
@@ -112,6 +115,7 @@ const PersonalInfo = (props) => {
         sex: (personalInfo.sex == '') ? errorMsg : '',
         birthDate: (personalInfo.birthDate == '') ? errorMsg : '',
         contact: (personalInfo.contact == '') ? errorMsg : '',
+        email: (personalInfo.email == '') ? errorMsg : '',
       })
     }
 
@@ -134,15 +138,15 @@ const PersonalInfo = (props) => {
     }    
 
     // temp
-    props.navigation.navigate('RegisterIndividualAddressInfo', {
-      personalInfo
-    });
+    // props.navigation.navigate('RegisterIndividualAddressInfo', {
+    //   personalInfo
+    // });
   }
 
   return (
     <ScrollView style={[stylesMain.container]}>
       <View style={{paddingHorizontal: 10, marginBottom: 15}}>
-        <TextRegular>For new resisdent on brgy please fill up the following for contract tracing.</TextRegular>
+        <TextRegular>For new resisdent on brgy please fill up the following for contact tracing.</TextRegular>
       </View>
       <View style={[styles.form]}>
         
@@ -187,8 +191,8 @@ const PersonalInfo = (props) => {
             selectedValue={personalInfo.sex}
             onValueChange={(val, index) => setFields('sex', val)}>
             <Picker.Item label="Select Sex" value=""  style={stylesMain.pickerItemPlaceholderStyle}/>
-            <Picker.Item label="Male" value="m"  style={stylesMain.pickerItemStyle}/>
-            <Picker.Item label="Female" value="f"  style={stylesMain.pickerItemStyle}/>
+            <Picker.Item label="Male" value="M"  style={stylesMain.pickerItemStyle}/>
+            <Picker.Item label="Female" value="F"  style={stylesMain.pickerItemStyle}/>
           </Picker>
         </View>
         <Text style={stylesMain.customInputError}>{errors.sex}</Text>
@@ -243,11 +247,19 @@ const PersonalInfo = (props) => {
         />
 
         <Input
-          label="Email Address (Optional)"
+          label="Email Address"
           placeholder="email@address.com"
           value={personalInfo.email}
           onChangeText={(val) => setFields('email', val)}
           errorMessage={errors.email}
+        />
+
+        <Input
+          label="Philhealth Number (Optional)"
+          placeholder=""
+          value={personalInfo.philhealth}
+          onChangeText={(val) => setFields('philhealth', val)}
+          errorMessage={errors.philhealth}
         />
 
         <View style={{marginTop: 40}}>

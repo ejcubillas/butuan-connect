@@ -91,7 +91,7 @@ const LoginEstablishment = (props) => {
       <StatusBar backgroundColor="transparent"/>
       <View style={[styles.form]}>
         <Input
-          label="Your Username"
+          label="Your username"
           placeholder="Username"
           value={username}
           onChangeText={(val) => {

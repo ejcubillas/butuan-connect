@@ -141,16 +141,23 @@ const Address = (props) => {
     if (!onError) {
       props.navigation.navigate('RegisterIndividualJobStatusInfo', {
         personalInfo: props.route.params.personalInfo,
-        address: address
+        address: {
+          ...address,
+          isButuanResident: (isButuanResident) ? 'YES' : 'NO'
+        },
+        
       })
     }    
 
 
     // temp
-    props.navigation.navigate('RegisterIndividualJobStatusInfo', {
-      personalInfo: props.route.params.personalInfo,
-      address: address
-    })
+    // props.navigation.navigate('RegisterIndividualJobStatusInfo', {
+    //   personalInfo: props.route.params.personalInfo,
+    //   address: {
+    //     ...address,
+    //     isButuanResident: (isButuanResident) ? 'YES' : 'NO'
+    //   }
+    // })
   }
 
 
