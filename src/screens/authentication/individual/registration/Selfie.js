@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView, PermissionsAndroid} from 'react-native';
+import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView, PermissionsAndroid, Platform} from 'react-native';
 import { stylesMain } from '../../../../styles/main';
 import { Input, Button, Link, TextSubHeading } from '../../../../components/ui';
 import { RNCamera } from 'react-native-camera';
@@ -22,38 +22,55 @@ const Selfie = (props) => {
     content: ''
   })
   const openCamera = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: "Butuan Connect Camera Permission",
-          message:
-            "Butuan Connect needs access to your camera " +
-            "so you can take picture.",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+    if (Platform.OS === 'ios') {
+      launchCamera({
+        cameraType: 'front',
+        saveToPhotos: false,
+        maxHeight: 500,
+        maxHeight: 500,
+        mediaType: 'photo',
+        includeBase64: true
+      }, (data) => {
+        if (!data.didCancel) {
+          console.log(data.assets);
+          setImage(data.assets[0])
         }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        launchCamera({
-          cameraType: 'front',
-          saveToPhotos: false,
-          maxHeight: 500,
-          maxHeight: 500,
-          mediaType: 'photo',
-          includeBase64: true
-        }, (data) => {
-          if (!data.didCancel) {
-            console.log(data.assets);
-            setImage(data.assets[0])
+      })
+    }else {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: "Butuan Connect Camera Permission",
+            message:
+              "Butuan Connect needs access to your camera " +
+              "so you can take picture.",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK"
           }
-        })
-      } else {
-        console.log("Camera permission denied");
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          launchCamera({
+            cameraType: 'front',
+            saveToPhotos: false,
+            maxHeight: 500,
+            maxHeight: 500,
+            mediaType: 'photo',
+            includeBase64: true
+          }, (data) => {
+            if (!data.didCancel) {
+              console.log(data.assets);
+              setImage(data.assets[0])
+            }
+          })
+        } else {
+          console.log("Camera permission denied");
+        }
+      } catch (err) {
+        console.warn(err);
       }
-    } catch (err) {
-      console.warn(err);
     }
+    
     
   }
 

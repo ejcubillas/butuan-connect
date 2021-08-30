@@ -2,7 +2,7 @@ import React, { useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { View, StyleSheet, Text} from 'react-native';
 import { stylesMain } from '../../../../styles/main';
-import { Input, Button, Link } from '../../../../components/ui';
+import { Input, Button, Link, TextRegular } from '../../../../components/ui';
 
 // Redux
 import { useDispatch, useSelector } from '../../../../store/store';
@@ -12,10 +12,15 @@ import { register, loginIndividual } from '../../../../store/slices/user';
 // import AccountTypeSelection from './AccountTypeSelection';
 import ProgressOverlay from '../../../../components/progress-overlay';
 import AlertModal from '../../../../components/ui/modal/Alert';
+import WebViewModal from '../../../../components/webview-modal';
 
 const AccountInfo = (props) => {
   const dispatch = useDispatch();
   const [showProgress, setShowProgress] = useState(false);
+  const [webViewModal, setWebViewModal] = useState({
+    isVisible: false,
+    uri: ''
+  })
   const [alertModal, setAlertModal] = useState({
     isVisible: false,
     type: 'error',
@@ -182,6 +187,38 @@ const AccountInfo = (props) => {
           secureTextEntry={true}
         />
         
+        <View style={{flexDirection: 'row', alignItems: 'flex-start', flexWrap: 'wrap', paddingHorizontal: 5}}>
+          <TextRegular style={{}}>By entering Butuan Connect, </TextRegular>
+          <TextRegular>I </TextRegular>
+          <TextRegular>agree </TextRegular>
+          <TextRegular>to </TextRegular>
+          <TextRegular>the </TextRegular>
+          <Link
+            title="Privacy Policy"
+            onPress={() => {
+              setWebViewModal({
+                isVisible: true,
+                uri: ''
+              })
+            }}
+          />
+          <TextRegular style={{}}>, </TextRegular>
+          <Link
+            title="Terms and Condition"
+            onPress={() => {
+              setWebViewModal({
+                isVisible: true,
+                uri: ''
+              })
+            }}
+          />
+          <TextRegular> and </TextRegular>
+          <TextRegular>all </TextRegular>
+          <TextRegular>information </TextRegular>
+          <TextRegular>is </TextRegular>
+          <TextRegular>correct. </TextRegular>
+          
+        </View>
 
         <View style={{marginTop: 20}}>
           <Button
@@ -208,6 +245,7 @@ const AccountInfo = (props) => {
           })
         }}
       />
+      <WebViewModal {...webViewModal} handleClose={() => setWebViewModal({...webViewModal, isVisible: false})}/>
       
     </View>
   )

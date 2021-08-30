@@ -18,19 +18,41 @@ import Splash from './src/screens/Splash';
 // redux
 import { useDispatch, useSelector } from './src/store/store';
 import { setNetworkInfo } from './src/store/slices/network';
+import { syncScannedIndividual, syncScannedEstablishment } from './src/store/slices/tracing';
 
 const App = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const [screen, setScreen] = useState(<Splash />)
   const tracing = useSelector((state) => state.tracing);
+  const network = useSelector((state) => state.network);
 
   useEffect(() => {
     SplashScreen.hide();
     NetInfo.addEventListener(state => dispatch(setNetworkInfo(state)));
-    console.log('SCANNED OFFLINE');
-    console.log(tracing.offlineScan);
   }, [])
+
+  useEffect(() => {
+    if (network.isInternetReachable) {
+      dispatch(syncScannedIndividual())
+        .then(syncRes => {
+          console.log(syncRes);
+        })
+        .catch(syncErr => {
+          console.log(syncErr);
+        })
+
+      dispatch(syncScannedEstablishment())
+        .then(syncRes => {
+          console.log('SYNC SCANN ESTAB');
+          console.log(syncRes);
+          console.log('SCAN SYNC SUCCESS');
+        })
+        .catch(syncErr => {
+          console.log('SCAN SYNC ERROR');
+        })
+    }
+  }, [network.isInternetReachable])
 
   useEffect(() => {
     // login('ej', 'password')

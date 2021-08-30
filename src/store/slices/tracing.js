@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import axios from '../../utils/axios';
+import moment from 'moment-timezone';
 // { contacts: [...] }
 
 export const tracingSlice = createSlice({
@@ -24,6 +25,14 @@ export const tracingSlice = createSlice({
     setEstOfflineScan: (state, { payload }) => {
       console.log(state.estabOfflineScan);
       state.estabOfflineScan.push(payload);
+    },
+
+    clearEstOfflineScan: (state, { payload }) => {
+      state.estabOfflineScan = [];
+    },
+
+    clearOfflineScan: (state, { payload }) => {
+      state.offlineScan = [];
     }
 
     
@@ -45,13 +54,14 @@ export const scanEstablishment = (qrcode) => (dispatch, getState) => new Promise
     // if offline (network.isInternetReachable == false), save it to offlineScan
     // save it to offline scan
     dispatch(tracingSlice.actions.setOfflineScan({
-      qrcode,
+      code: qrcode,
       id: state.user.id,
-      synced: false,
-      date: Date.now()
+      datetime: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
     }))
 
-    resolve('Offline Scan - success');
+    resolve({
+      result: 'OFFLINE'
+    });
 
   }else {
     // if online, send to server
@@ -62,7 +72,10 @@ export const scanEstablishment = (qrcode) => (dispatch, getState) => new Promise
       })
 
       if (response.data.success) {
-        resolve('Online Scan - success');
+        resolve({
+          result: 'ONLINE',
+          data: response.data
+        })
       }else {
         reject(response.data.msg);
       }
@@ -86,14 +99,14 @@ export const scanIndividual = (qrcode) => (dispatch, getState) => new Promise(as
     // if offline (network.isInternetReachable == false), save it to offlineScan
     // save it to offline scan
     dispatch(tracingSlice.actions.setEstOfflineScan({
-      qrcode,
+      code: qrcode,
       id: state.user.id,
-      synced: false,
-      date: Date.now()
+      datetime: moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+      log_type: state.user.logType
     }))
 
     resolve({
-      status: 'COMPLETED-OFFLINE'
+      result: 'OFFLINE'
     })
 
   }else {
@@ -107,17 +120,10 @@ export const scanIndividual = (qrcode) => (dispatch, getState) => new Promise(as
       console.log(response.data);
   
       if (response.data.success) {
-        if (response.data.status == 'INVALID') {
-          resolve({
-            status: 'INVALID',
-            data: response.data
-          });
-        }else if (response.data.status == 'COMPLETED') {
-          resolve({
-            status: 'COMPLETED',
-            data: response.data
-          })
-        }
+        resolve({
+          result: 'ONLINE',
+          data: response.data
+        });
       }else {
         reject(response.data.msg || 'Something went wrong. Please try again.');
       }
@@ -125,5 +131,98 @@ export const scanIndividual = (qrcode) => (dispatch, getState) => new Promise(as
       reject('Something went wrong. Please try again.');
     }
 
+  }
+})
+
+export const syncScannedEstablishment = () => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  const state = getState();
+  // dispatch(tracingSlice.actions.clearOfflineScan())
+  if (!state.network.isInternetReachable) {
+    return reject({
+      message: 'Unble to sync, please check your internet connection.',
+      status: 'ERROR'
+    })
+  }
+
+  if (state.tracing.offlineScan.length == 0) {
+    return reject({
+      message: 'No records to sync.',
+      status: 'NORECORDS'
+    })
+  }
+
+  try {
+    const response = await axios.post('/establishment-sync', state.tracing.offlineScan, {
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+    if (!response.data.success) {
+      reject({
+        message: 'Something went wrong while syncing records.',
+        status: 'ERROR'
+      })  
+    }else {
+      dispatch(tracingSlice.actions.clearOfflineScan())
+      resolve({
+        status: 'SUCCESS',
+        message: 'Records synced successfully.'
+      });
+    }
+
+  } catch (error) {
+    console.log(error);
+    reject({
+      message: 'Something went wrong while syncing records. asdasd',
+      status: 'ERROR'
+    })
+  }
+})
+
+export const syncScannedIndividual = () => (dispatch, getState) => new Promise(async (resolve, reject) => {
+  const state = getState();
+  // dispatch(tracingSlice.actions.clearEstOfflineScan())
+
+  if (!state.network.isInternetReachable) {
+    return reject({
+      message: 'Unble to sync, please check your internet connection.',
+      status: 'ERROR'
+    })
+  }
+
+  console.log(state.tracing.estabOfflineScan);
+
+  if (state.tracing.estabOfflineScan.length == 0) {
+    return reject({
+      message: 'No records to sync.',
+      status: 'NORECORDS'
+    })
+  }
+
+  try {
+    const response = await axios.post('/individual-sync', state.tracing.estabOfflineScan, {
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+    if (!response.data.success) {
+      reject({
+        message: 'Something went wrong while syncing records.',
+        status: 'ERROR'
+      })  
+    }else {
+      dispatch(tracingSlice.actions.clearEstOfflineScan())
+      resolve({
+        status: 'SUCCESS',
+        message: 'Records synced successfully.'
+      });
+    }
+
+  } catch (error) {
+    console.log(error);
+    reject({
+      message: 'Something went wrong while syncing records. asdasd',
+      status: 'ERROR'
+    })
   }
 })

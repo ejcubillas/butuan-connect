@@ -11,9 +11,10 @@ import colors from '../../styles/colors';
 
 // components
 import QRScanner from '../../components/qrscanner';
-import ScanResultEstablishment from '../../components/scan-result/establishment';
+// import ScanResultEstablishment from '../../components/scan-result/establishment';
 import HomeMenu from '../../components/home-menu';
 import NetworkIndicator from '../../components/network-indicator';
+import ProfilePicture from '../../components/profile-picture';
 
 const QRWidth = Dimensions.get('window').width * .6;
 const windowWidth = Dimensions.get('window').width;
@@ -37,36 +38,8 @@ const TraceIndividual = (props) => {
         </View>
       </View>
       <View style={{flex: 1}}>
-        <View style={{alignItems: 'center', marginTop: (windowWidth/2.3)*-1}}>
-          <View style={{ position: 'relative' }}>
-            {
-              (user.profileImage) ? 
-                <>
-                  <Image
-                    source={{
-                      uri: user.profileImage
-                    }}
-                    style={{
-                      width: windowHeight/4.5,
-                      height: windowHeight/4.5,
-                      borderRadius: windowHeight/4.5,
-                      borderWidth: 5,
-                      borderColor: '#fff'
-                    }}
-                  />
-                  <View style={styles.accountVerifiedIcon}>
-                    <Icon
-                      name="check-circle"
-                      color={colors.primary}
-                      size={35}
-                    />
-                  </View>
-                </> : null
-            }
-            
-          </View>
-          <TextRegular style={styles.name}>{user.fullName}</TextRegular>
-        </View>
+        <ProfilePicture uri={user.profileImage}/>
+        <TextRegular style={styles.name}>{user.fullName}</TextRegular>
         <View 
           onLayout={(event) => setQRSize(event.nativeEvent.layout.height-10)}
           style={styles.qrContainer}>
@@ -108,12 +81,12 @@ const TraceIndividual = (props) => {
         }}
       />
 
-      <ScanResultEstablishment
+      {/* <ScanResultEstablishment
         isVisible={showResult}
         close={() => {
           setShowResult(false)
         }}
-      />
+      /> */}
     </View>
   )
   
@@ -124,7 +97,7 @@ export default TraceIndividual;
 
 const styles = StyleSheet.create({
   name: {
-    fontSize: 18,
+    fontSize: 20,
     paddingHorizontal: 15,
     textAlign: 'center',
     marginTop: 10,
@@ -151,14 +124,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.primary,
     borderRadius: 5
-  },
-
-  accountVerifiedIcon: {
-    position: 'absolute',
-    right: 10,
-    bottom: 10,
-    backgroundColor: '#fff',
-    borderRadius: 35
   },
 
   container: {

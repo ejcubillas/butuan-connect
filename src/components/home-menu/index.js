@@ -13,6 +13,7 @@ import { AlertModal } from '../ui/modal';
 import ProgressOverlay from '../progress-overlay';
 import QRScanner from '../../components/qrscanner';
 import ScanResult from '../scan-result/offlineResult';
+import OnlineScanResult from '../scan-result/onlineResult';
 // icons
 import Bell from '../../icons/bell.svg';
 import Messages from '../../icons/comments.svg';
@@ -31,7 +32,26 @@ const HomeMenu = (props) => {
   });
   const [showProgress, setShowProgress] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
-  const [showScanSuccess, setShowScanSuccess] = useState(false)
+  const [showScanSuccess, setShowScanSuccess] = useState(false);
+  const [scanOnlineResult, setScanOnlineResult] = useState({
+    isVisible: false,
+    data: {
+      establishment: '',
+      log: {
+        date: '',
+        time: '',
+        type: ''
+      }, 
+      msg: '',
+      profile: {
+        fullname: '',
+        picture: '',
+        place: ''
+      },
+      status: '', // INVALID or COMPLETED
+      success: true
+    }
+  })
   const processScan = (data) => {
     setShowScanner(false);
     setShowProgress(true);
@@ -39,9 +59,18 @@ const HomeMenu = (props) => {
       dispatch(scanEstablishment(data))
         .then(scanRes => {
           // console.log
-          console.log(scanRes);
           setShowProgress(false);
-          setShowScanSuccess(true);
+          if (scanRes.result == 'ONLINE') {
+            setScanOnlineResult({
+              isVisible: true,
+              data: scanRes.data
+            })
+          }else {
+            // offline result
+            setShowScanSuccess(true);
+          }
+          
+          
         })
         .catch(error => {
           console.log('failed');
@@ -130,6 +159,10 @@ const HomeMenu = (props) => {
       <ScanResult
         isVisible={showScanSuccess}
         handleClose={() => setShowScanSuccess(false)}
+      />
+      <OnlineScanResult
+        {...scanOnlineResult}
+        handleClose={() => setScanOnlineResult({...scanOnlineResult, isVisible: false})}
       />
     </View>
       

@@ -14,11 +14,19 @@ const BtnPrimary = (props) => {
           {props.title}
         </Text>
       </LinearGradient>
-      {/* <BTN
-        containerStyle={[styles.primaryContainer]}
-        titleStyle={[styles.primaryText]}
-        {...props}
-      /> */}
+    </TouchableOpacity>
+  )
+}
+
+const BtnError = (props) => {
+  return (
+    <TouchableOpacity onPress={props.onPress}>
+
+      <LinearGradient start={{x: 0, y: 0}} end={{x: 1, y: 0}} colors={[colors.error, colors.error]} style={[styles.primaryContainer, {...props.style}]}>
+        <Text style={[styles.primaryText, props.textStyle]}>
+          {props.title}
+        </Text>
+      </LinearGradient>
     </TouchableOpacity>
   )
 }
@@ -27,6 +35,8 @@ const Button = (props) => {
   let btn = null;
   if (props.type == 'primary') {
     btn = <BtnPrimary {...props} />
+  }else if (props.type == 'error') {
+    btn = <BtnError {...props} />
   }else {
     btn = <BtnPrimary {...props} />
     // btn = <BTN style={[styles.buttonPrimary]} {...props} />
