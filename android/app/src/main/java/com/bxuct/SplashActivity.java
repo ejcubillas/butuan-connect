@@ -1,4 +1,4 @@
-package com.bxuconnect;
+package com.bxuct;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { View, StyleSheet, Text} from 'react-native';
 import { stylesMain } from '../../../../styles/main';
 import { Input, Button, Link, TextRegular } from '../../../../components/ui';
-
+import { PRIVACY_POLICY, TERMS_AND_CONDITION} from '../../../../config';
 // Redux
 import { useDispatch, useSelector } from '../../../../store/store';
 import { register, loginIndividual } from '../../../../store/slices/user';
@@ -198,7 +198,7 @@ const AccountInfo = (props) => {
             onPress={() => {
               setWebViewModal({
                 isVisible: true,
-                uri: ''
+                uri: PRIVACY_POLICY
               })
             }}
           />
@@ -208,7 +208,7 @@ const AccountInfo = (props) => {
             onPress={() => {
               setWebViewModal({
                 isVisible: true,
-                uri: ''
+                uri: TERMS_AND_CONDITION
               })
             }}
           />

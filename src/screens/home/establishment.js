@@ -135,16 +135,19 @@ const TraceEstablishment = (props) => {
   }
 
   const userLogout = () => {
-    dispatch(logout())
-      .then(res => {})
-      .catch(err => {
-        setShowProgress(false);
-        setAlertModal({
-          isVisible: true,
-          type: 'error',
-          content: ''
-        })
-      }) 
+    setShowProgress(true);
+    setTimeout(() => {
+      dispatch(logout())
+        .then(res => {})
+        .catch(err => {
+          setShowProgress(false);
+          setAlertModal({
+            isVisible: true,
+            type: 'error',
+            content: ''
+          })
+        }) 
+    }, 1000)
   }
 
   return (
