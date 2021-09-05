@@ -11,7 +11,10 @@ target 'bxuct' do
     # to enable hermes on iOS, change `false` to `true` and then install pods
     :hermes_enabled => false
   )
-
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways/Permission-LocationAlways.podspec"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse/Permission-LocationWhenInUse.podspec"
+  
   target 'bxuctTests' do
     inherit! :complete
     # Pods for testing
@@ -24,6 +27,13 @@ target 'bxuct' do
   use_flipper!()
 
   post_install do |installer|
-    react_native_post_install(installer)
+    flipper_post_install(installer)
+
+    installer.pods_project.targets.each do |target|
+    if target.name == "React-Core.common-AccessibilityResources"
+      target.remove_from_project
+    end
   end
+    #react_native_post_install(installer)
+end
 end
