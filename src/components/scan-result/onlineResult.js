@@ -21,6 +21,7 @@ import { Button, TextHeading, TextRegular, TextSubHeading } from '../ui';
 import Warning from '../../icons/warning.svg';
 import ProfilePicture from '../profile-picture';
 import colors from '../../styles/colors';
+import { ScrollView } from 'react-native-gesture-handler';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -39,8 +40,9 @@ const ScanResultIndividual = (props) => {
       animationOut="bounceOut"
       
     >
+      <ScrollView>
       <AutoHeightImage width={windowWidth} source={require('../../img/header-2.png')}  style={{marginTop: -32 }} />
-     
+      
       {
         (props.data.status == 'INVALID') ? 
           <>
@@ -65,7 +67,7 @@ const ScanResultIndividual = (props) => {
       
       <ProfilePicture uri={props.data.profile.picture} style={{marginTop: (props.data.status == 'INVALID') ? ((windowWidth/2.3)*-1)+100 : (windowWidth/2.3)*-1}}/>
       <View style={{padding: 20, paddingHorizontal: 70 }}>
-        <TextHeading style={{textAlign: 'center', marginBottom: 20, marginTop: 10}}>{props.data.profile.fullname}!</TextHeading>
+        <TextHeading style={{textAlign: 'center', marginBottom: 20, marginTop: 10}}>{props.data.profile.fullname}</TextHeading>
         <TextRegular style={styles.centerText}>{props.data.log.date}</TextRegular>
         <TextRegular style={styles.centerText}>{props.data.log.time}</TextRegular>
         <TextRegular style={styles.centerText}>{props.data.establishment}</TextRegular>
@@ -80,7 +82,7 @@ const ScanResultIndividual = (props) => {
           />
         </View>
       </View>
-      
+      </ScrollView>
     </Modal>
     
   );
