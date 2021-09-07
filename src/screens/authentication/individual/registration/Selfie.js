@@ -31,6 +31,7 @@ const Selfie = (props) => {
         mediaType: 'photo',
         includeBase64: true
       }, (data) => {
+        // console.log(data);
         if (!data.didCancel) {
           console.log(data.assets);
           setImage(data.assets[0])

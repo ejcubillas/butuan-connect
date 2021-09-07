@@ -38,6 +38,10 @@ const AccountInfo = (props) => {
     confirmPassword: ''
   });
 
+  const [onProgressHide, setOnProgressHide] = useState({
+    showAlert: () => {}
+  })
+
   const setFields = (field, value, required = true) => {
     setAccountInfo({
       ...accountInfo,
@@ -139,21 +143,31 @@ const AccountInfo = (props) => {
 
           })
           .catch(err => {
-            setShowProgress(false);
-            setAlertModal({
-              isVisible: true,
-              type: 'error',
-              content: err || 'Your account was successfully created, but we are unable to log it in. Please try to login in the login page.'
+            setOnProgressHide({
+              showAlert: () => {
+                setAlertModal({
+                  isVisible: true,
+                  type: 'error',
+                  content: err || 'Your account was successfully created, but we are unable to log it in. Please try to login in the login page.'
+                })
+              }
             })
+            setShowProgress(false);
+            
           })
       })
       .catch(err => {
-        setShowProgress(false);
-        setAlertModal({
-          isVisible: true,
-          type: 'error',
-          content: err || 'Somethingg went wrong. Please try again.'
+        setOnProgressHide({
+          showAlert: () => {
+            setAlertModal({
+              isVisible: true,
+              type: 'error',
+              content: err || 'Somethingg went wrong. Please try again.'
+            })
+          }
         })
+        setShowProgress(false);
+        
       })
   }
 
@@ -232,7 +246,7 @@ const AccountInfo = (props) => {
       
       
       
-      <ProgressOverlay isVisible={showProgress} />
+      <ProgressOverlay isVisible={showProgress} onModalHide={onProgressHide.showAlert}/>
       <AlertModal
         isVisible={alertModal.isVisible}
         type={alertModal.type}

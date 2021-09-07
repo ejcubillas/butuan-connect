@@ -7,7 +7,8 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  Linking
+  Linking,
+  Platform
 } from 'react-native';
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -55,7 +56,8 @@ const QRScanner = (props) => {
           position: 'absolute',
           zIndex: 1,
           flexDirection: 'row',
-          justifyContent: 'flex-start'
+          justifyContent: 'flex-start',
+          paddingTop: (Platform.OS == 'ios') ? 30 : 0
         }}
 
         // bottomViewStyle={{position:'absolute'}}

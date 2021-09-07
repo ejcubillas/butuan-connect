@@ -14,6 +14,7 @@ const ProgressOverlay = (props) => {
         animationOut="bounceOut"
         statusBarTranslucent={true}
         easing="ease-in-out"
+        onModalHide={props.onModalHide}
       >
         <View style={styles.indicatorContainer}>
           <MaterialIndicator color={colors.primary}/>

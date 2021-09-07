@@ -34,7 +34,9 @@ const Auth = (props) => {
     content: '',
     type: 'error' // or success
   });
-
+  const [onProgressHide, setOnProgressHide] = useState({
+    showAlert: () => {}
+  })
 
   const user = useSelector((state) => state.user);
   
@@ -62,16 +64,18 @@ const Auth = (props) => {
     setShowProgress(true)
     dispatch(loginIndividual(username, password))
       .then(loginRes => {
-        setShowProgress(false)
+        // setOnProgressHide({showAlert: () => {}})
+        // setShowProgress(false)
       })
       .catch(errorMsg => {
-        console.log(errorMsg);
+        setOnProgressHide({showAlert: () => {
+          setAlertModal({
+            show: true,
+            type: 'error',
+            content: errorMsg
+          })
+        }})
         setShowProgress(false)
-        setAlertModal({
-          show: true,
-          type: 'error',
-          content: errorMsg
-        })
       })
 
    
@@ -180,6 +184,7 @@ const Auth = (props) => {
 
       <ProgressOverlay
         isVisible={showProgress}
+        onModalHide={onProgressHide.showAlert}
       />
       <AlertModal
         isVisible={alertModal.show}

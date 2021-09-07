@@ -1,9 +1,9 @@
 import axios from 'axios';
-
+import { API } from '../config';
 // ----------------------------------------------------------------------
 
 const axiosInstance = axios.create({
-  baseURL: 'https://trace.novusoftit.com/api/'
+  baseURL: API
 });
 
 axiosInstance.interceptors.response.use(

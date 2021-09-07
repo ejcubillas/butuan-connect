@@ -20,6 +20,7 @@ const AlertModal = (props) => {
   }
 
   return (
+    // <View style={{flex: 1}}>
     <Modal
         isVisible={props.isVisible}
         animationIn="bounceIn"
@@ -51,7 +52,7 @@ const AlertModal = (props) => {
         </View>
         
       </Modal>
-      
+    // </View>
   )
 }
 

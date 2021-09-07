@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, View, Text} from 'react-native';
+import {Button, View, Text, Platform} from 'react-native';
 import { Icon } from 'react-native-elements';
 import Link from '../link';
 import { TextSubHeading } from '../text';
@@ -17,7 +17,7 @@ function InfoModal(props) {
         onBackButtonPress={props.toggle}  
       >
         <View style={{flex: 1, backgroundColor: '#fff'}}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20, paddingTop: (Platform.OS == 'ios') ? 30 : 0}}>
             
             <Link
               title={<Icon name="close" color={colors.primary} size={30}/>}

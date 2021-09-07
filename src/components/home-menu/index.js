@@ -30,6 +30,9 @@ const HomeMenu = (props) => {
     content: '',
     type: ''
   });
+  const [onProgressHide, setOnProgressHide] = useState({
+    showResult: () => {}
+  })
   const [showProgress, setShowProgress] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [showScanSuccess, setShowScanSuccess] = useState(false);
@@ -59,27 +62,36 @@ const HomeMenu = (props) => {
       dispatch(scanEstablishment(data))
         .then(scanRes => {
           // console.log
+          setOnProgressHide({
+            showResult: () => {
+              if (scanRes.result == 'ONLINE') {
+                setScanOnlineResult({
+                  isVisible: true,
+                  data: scanRes.data
+                })
+              }else {
+                // offline result
+                setShowScanSuccess(true);
+              }
+            }
+          })
           setShowProgress(false);
-          if (scanRes.result == 'ONLINE') {
-            setScanOnlineResult({
-              isVisible: true,
-              data: scanRes.data
-            })
-          }else {
-            // offline result
-            setShowScanSuccess(true);
-          }
+          
           
           
         })
         .catch(error => {
-          console.log('failed');
-          setShowProgress(false);
-          setAlertModal({
-            show: true,
-            type: 'error',
-            content: error
+          setOnProgressHide({
+            showResult: () => {
+              setAlertModal({
+                show: true,
+                type: 'error',
+                content: error
+              })
+            }
           })
+          setShowProgress(false);
+          
         })
       
     }, 1500)
@@ -94,12 +106,17 @@ const HomeMenu = (props) => {
           // setShowProgress(false);
         })
         .catch(err => {
-          setShowProgress(false);
-          setAlertModal({
-            show: true,
-            type: 'error',
-            content: 'Somwthing went wrong.'
+          setOnProgressHide({
+            showResult: () => {
+              setAlertModal({
+                show: true,
+                type: 'error',
+                content: 'Somwthing went wrong.'
+              })
+            }
           })
+          setShowProgress(false);
+          
         })
       }, 1000)
     
@@ -144,6 +161,7 @@ const HomeMenu = (props) => {
       <ProgressOverlay
         isVisible={showProgress}
         handleClose={() => setShowProgress(false)}
+        onModalHide={onProgressHide.showResult}
       />
       <AlertModal
         isVisible={alertModal.show}

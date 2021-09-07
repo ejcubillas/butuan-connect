@@ -49,6 +49,9 @@ const TraceEstablishment = (props) => {
     isVisible: false
   })
   const [showProgress, setShowProgress] = useState(false);
+  const [onProgressHide, setOnProgressHide] = useState({
+    showResult: () => {}
+  })
 
   useEffect(() => {
     setInterval(() => {
@@ -60,25 +63,35 @@ const TraceEstablishment = (props) => {
     setShowProgress(true);
     dispatch(scanIndividual(data.data))
       .then(res => {
+        setOnProgressHide({
+          showResult: () => {
+            if (res.result == 'ONLINE') {
+              setScanResult({
+                isVisible: true,
+                data: res.data
+              })
+            }else {
+              setShowOfflineScanResult(true);
+            }
+          }
+        })
         setShowProgress(false);
-        if (res.result == 'ONLINE') {
-          setScanResult({
-            isVisible: true,
-            data: res.data
-          })
-        }else {
-          setShowOfflineScanResult(true)
-          
-        }
+        
 
       })
       .catch(err => {
-        setShowProgress(false);
-        setAlertModal({
-          isVisible: true,
-          content: err,
-          type: 'error'
+        
+        setOnProgressHide({
+          showResult: () => {
+            setAlertModal({
+              isVisible: true,
+              content: err,
+              type: 'error'
+            })
+          }
         })
+        setShowProgress(false);
+        
       })
   }
 
@@ -140,12 +153,18 @@ const TraceEstablishment = (props) => {
       dispatch(logout())
         .then(res => {})
         .catch(err => {
-          setShowProgress(false);
-          setAlertModal({
-            isVisible: true,
-            type: 'error',
-            content: ''
+          
+          setOnProgressHide({
+            showResult: () => {
+              setAlertModal({
+                isVisible: true,
+                type: 'error',
+                content: ''
+              })
+            }
           })
+          setShowProgress(false);
+          
         }) 
     }, 1000)
   }
@@ -213,7 +232,7 @@ const TraceEstablishment = (props) => {
       <ScanResultIndividual isVisible={scanResult.isVisible} handleClose={handleCloseScanResult} data={scanResult.data} />
       <ScanResult isVisible={showOfflineScanResult} handleClose={handleCloseOfflineScanResult} />
       <AlertModal isVisible={alertModal.isVisible} type={alertModal.type} content={alertModal.content} handleClose={handleCloseAlertModal}/>
-      <ProgressOverlay isVisible={showProgress} handleClose={() => setShowProgress(false)} />
+      <ProgressOverlay isVisible={showProgress} onModalHide={onProgressHide.showResult} handleClose={() => setShowProgress(false)} />
     </View>
   )
 }

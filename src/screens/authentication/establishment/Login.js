@@ -45,6 +45,9 @@ const LoginEstablishment = (props) => {
     type: 'error' // or success
   });
 
+  const [onProgressHide, setOnProgressHide] = useState({
+    showAlert: () => {}
+  })
 
   const user = useSelector((state) => state.user);
   
@@ -72,15 +75,26 @@ const LoginEstablishment = (props) => {
     setShowProgress(true)
     dispatch(loginEstablishment(username, password, logType))
       .then(loginRes => {
-        setShowProgress(false)
+        // setOnProgressHide({ showAlert: () => {}})
+        // setShowProgress(false)
       })
       .catch(errorMsg => {
-        setShowProgress(false)
-        setAlertModal({
-          show: true,
-          type: 'error',
-          content: errorMsg
+        setOnProgressHide({
+          showAlert: () => {
+            setAlertModal({
+              // ...alertModal,
+              show: true,
+              type: 'error',
+              content: errorMsg
+            })
+          }
+        
+             
         })
+        setShowProgress(false)
+        
+        
+        
       })
 
    
@@ -154,6 +168,7 @@ const LoginEstablishment = (props) => {
 
       <ProgressOverlay
         isVisible={showProgress}
+        onModalHide={onProgressHide.showAlert}
       />
       <AlertModal
         isVisible={alertModal.show}
