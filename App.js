@@ -10,6 +10,7 @@ import NetInfo from "@react-native-community/netinfo";
 import SplashScreen from 'react-native-splash-screen';
 import { Button } from './src/components/ui'
 import { NavigationContainer } from '@react-navigation/native';
+import Toast, { BaseToast } from 'react-native-toast-message';
 // Routes
 import AuthStack from './src/navigation/auth';
 import IndividualStack from './src/navigation/individual';
@@ -33,23 +34,57 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    if (network.isInternetReachable) {
+    console.log(network);
+    if (network.isInternetReachable == true) {
+      console.log(network.isInternetReachable, 'NETWORK');
+      if (tracing.offlineScan.length > 0 || tracing.estabOfflineScan.length > 0) {
+        // show progress toast
+        Toast.show({
+          type: 'info',
+          text1: 'Syncing',
+          position: 'bottom',
+          text2: 'Syncing scanned QR codes...',
+          // text2: 'This is some something 👋'
+        });
+      }
       dispatch(syncScannedIndividual())
         .then(syncRes => {
-          console.log(syncRes);
+          Toast.show({
+            type: 'success',
+            text1: 'Successful!',
+            position: 'bottom',
+            text2: 'Successfully synced the scanned QR codes.',
+          });
         })
         .catch(syncErr => {
-          console.log(syncErr);
+          if (syncErr.status !== 'NORECORDS') {
+            Toast.show({
+              type: 'error',
+              text1: 'Sync Error!',
+              position: 'bottom',
+              text2: syncErr.message,
+            });
+          }
         })
 
       dispatch(syncScannedEstablishment())
         .then(syncRes => {
-          console.log('SYNC SCANN ESTAB');
-          console.log(syncRes);
-          console.log('SCAN SYNC SUCCESS');
+          Toast.show({
+            type: 'success',
+            text1: 'Successful!',
+            position: 'bottom',
+            text2: 'Successfully synced the scanned QR codes.',
+          });
         })
         .catch(syncErr => {
-          console.log('SCAN SYNC ERROR');
+          if (syncErr.status !== 'NORECORDS') {
+            Toast.show({
+              type: 'error',
+              text1: 'Sync Error!',
+              position: 'bottom',
+              text2: syncErr.message,
+            });
+          }
         })
     }
   }, [network.isInternetReachable])
@@ -86,6 +121,7 @@ const App = () => {
       <NavigationContainer>
         {screen}
       </NavigationContainer>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </>
   )
 

@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppRegistry,
   StyleSheet,
@@ -12,12 +12,12 @@ import {
   Dimensions,
   StatusBar
 } from 'react-native';
-import moment from 'moment-timezone';
-import * as Animatable from 'react-native-animatable';
+import Sound from 'react-native-sound';
 import AutoHeightImage from 'react-native-auto-height-image';
 import { Icon } from 'react-native-elements';
 import Modal from 'react-native-modal';
 import { Button, TextHeading, TextRegular, TextSubHeading } from '../ui';
+import { useSelector } from '../../store/store';
 import Warning from '../../icons/warning.svg';
 import ProfilePicture from '../profile-picture';
 import colors from '../../styles/colors';
@@ -25,10 +25,35 @@ import { ScrollView } from 'react-native-gesture-handler';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+const buzzer = new Sound('buzzer.mp3', Sound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error);
+    return;
+  }
+});
+
+const success = new Sound('preview.mp3', Sound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error);
+    return;
+  }
+});
+
 const ScanResultIndividual = (props) => {
   if (!props.data) return null;
   const [profileMarginTop, setProfileMarginTop] = useState(0)
-  
+  const user = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (props.isVisible) {
+      if (props.data.status == 'INVALID') {
+        buzzer.play()
+      }else {
+        success.play();
+      }
+    }
+  }, [props.isVisible])
+
   return (
     <Modal isVisible={props.isVisible}
       // backdropColor="#fff"
@@ -46,7 +71,7 @@ const ScanResultIndividual = (props) => {
       {
         (props.data.status == 'INVALID') ? 
           <>
-            <StatusBar backgroundColor='rgba(255,255,255,0.8)'/>
+            <StatusBar backgroundColor='rgba(255,255,255,0.9)'/>
             <View style={{ position: 'absolute', backgroundColor: 'rgba(255,255,255,0.8)', width: '100%', padding: 15, alignItems: 'center', zIndex: 9}}
               onLayout={(e) => {
                 console.log('PROFILE MARGIN');
@@ -75,11 +100,13 @@ const ScanResultIndividual = (props) => {
       </View>
       <View style={{ flex: 1, justifyContent: 'flex-end', padding: 30}}>
         <View>
-          <Button
-            title="CLOSE"
-            onPress={props.handleClose}
-            type={(props.data.status == 'INVALID') ? 'error' : 'primary'}
-          />
+          
+              <Button
+                title="CLOSE"
+                onPress={props.handleClose}
+                type={(props.data.status == 'INVALID') ? 'error' : 'primary'}
+              />
+          
         </View>
       </View>
       </ScrollView>

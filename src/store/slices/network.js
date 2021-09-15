@@ -6,8 +6,8 @@ export const networkSlice = createSlice({
   name: 'network',
   initialState: {
     type: '',
-    isConnected: true,
-    isInternetReachable: true
+    isConnected: false,
+    isInternetReachable: false
   },
   reducers: {
     setNetwork: (state, { payload }) => {

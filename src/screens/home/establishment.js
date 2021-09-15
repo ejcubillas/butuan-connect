@@ -18,7 +18,8 @@ import ProgressOverlay from '../../components/progress-overlay';
 
 
 const TraceEstablishment = (props) => {
-  let scanner = null;
+  // let scanner = null;
+  const [scanner, setScannerRef] = useState(null);
   const dispatch = useDispatch();
   const [showCamera, setShowCamera] = useState(true);
   const user = useSelector((state) => state.user);
@@ -59,19 +60,32 @@ const TraceEstablishment = (props) => {
     }, 1000)
   }, [])
 
+  const delay = () => {
+    return new Promise(resolve => setTimeout(resolve, 4000));
+  }
+
   const onSuccess = (data) => {
     setShowProgress(true);
     dispatch(scanIndividual(data.data))
       .then(res => {
         setOnProgressHide({
-          showResult: () => {
+          showResult: async () => {
             if (res.result == 'ONLINE') {
+              
               setScanResult({
                 isVisible: true,
                 data: res.data
-              })
+              });
+              await delay();
+              if (!scanResult.isVisible) {
+                handleCloseScanResult();
+              }
             }else {
               setShowOfflineScanResult(true);
+              await delay();
+              if (!showOfflineScanResult) {
+                handleCloseOfflineScanResult();
+              }
             }
           }
         })
@@ -211,7 +225,7 @@ const TraceEstablishment = (props) => {
       </View>
       <View style={styles.cameraContainer}>
         <QRCodeScanner
-          ref={(node) => { scanner = node }}
+          ref={(node) => { setScannerRef(node)}}
           onRead={onSuccess}
           cameraStyle={{ height: '100%'}}
           showMarker={true}

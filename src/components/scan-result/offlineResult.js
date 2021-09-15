@@ -1,8 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import { View, StyleSheet, ScrollView} from 'react-native';
-import { Icon } from 'react-native-elements';
-import { stylesMain } from '../../styles/main';
-import colors from '../../styles/colors';
+import Sound from 'react-native-sound';
 // Redux
 // components
 import * as Animatable from 'react-native-animatable';
@@ -11,9 +9,19 @@ import { ShadowPropTypesIOS } from 'react-native';
 // icons
 import Checked from '../../icons/checked.svg';
 
+const success = new Sound('preview.mp3', Sound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error);
+    return;
+  }
+});
 // OFFLINE RESULT
 const ScanResult = (props) => {
-
+  useEffect(() => {
+    if (props.isVisible) {
+      success.play();
+    }
+  }, [props.isVisible])
   return (
     
 
